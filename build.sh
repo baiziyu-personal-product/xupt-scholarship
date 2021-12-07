@@ -1,9 +1,9 @@
 #!/bin/bash
 source /etc/profile
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start "
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start update ECS server code and build for your service "
 
-cd /project/xupt-scholarship/ && git pull && go mod tidy && go build
+cd /project/xupt-scholarship/ && git pull && go mod tidy && go build && supervisorctl restart xupt
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> finish "
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> finish all works"
 
