@@ -1,13 +1,9 @@
 #!/bin/bash
 source /etc/profile
 
-cd /project/xupt-scholarship/
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start update loca repo"
-git pull
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start "
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> local repo is lastet, start build go application"
+cd /project/xupt-scholarship/ && git pull && go mod tidy && go build
 
-go mod tidy && go build
-
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OK "
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> finish "
 
