@@ -31,4 +31,4 @@ jobs:
         username: ${{ secrets.ALIYUN_USER }}
         password: ${{ secrets.ALIYUN_PASSWORD }}
         port: 22
-        script: bash /project/xupt-scholarship/build.sh
+        script: cd /project/xupt-scholarship/ && bash /project/xupt-scholarship/build.sh
