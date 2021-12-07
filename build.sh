@@ -1,7 +1,7 @@
 #!/bin/bash
 source /etc/profile
 
-
+cd /project/xupt-scholarship/
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start update loca repo"
 git pull
 
