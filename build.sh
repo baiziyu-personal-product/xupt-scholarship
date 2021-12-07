@@ -3,7 +3,7 @@ source /etc/profile
 
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start update loca repo"
-git pull origin main
+git pull
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> local repo is lastet, start build go application"
 
