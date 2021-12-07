@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  build_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,3 +23,14 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+  build_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.ALIYUN_HOST }}
+        username: ${{ secrets.ALIYUN_USER }}
+        password: ${{ secrets.ALIYUN_PASSWORD }}
+        port: 22
+        script: cd /project/xupt-scholarship && git pull && go mod download && go build
