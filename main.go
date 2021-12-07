@@ -10,6 +10,6 @@ func main() {
 
 func index(ctx iris.Context) {
 	ctx.JSON(iris.Map{
-		"Message": "Hello Go",
+		"Message": "Hello, Welcome to Iris Go",
 	})
 }
