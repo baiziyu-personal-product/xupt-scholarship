@@ -6,6 +6,7 @@ import (
 )
 
 func LoggerServe(app *iris.Application) {
+
 	requestLogger := logger.New(
 		logger.Config{
 			Status:             true,
