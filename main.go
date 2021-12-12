@@ -1,15 +1,14 @@
 package main
 
-import "github.com/kataras/iris/v12"
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
+)
 
 func main() {
 	app := iris.New()
-	app.Get("/", index)
-	app.Listen(":8096")
-}
-
-func index(ctx iris.Context) {
-	ctx.JSON(iris.Map{
-		"Message": "Hello, Welcome to Iris Application!!!",
+	app.Get("/", func(context *context.Context) {
+		context.HTML("<h1>Hello World!!!</h1>")
 	})
+	app.Listen(":8096")
 }
