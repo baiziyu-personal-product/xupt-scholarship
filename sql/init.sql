@@ -1,0 +1,1 @@
+-- CREATE SCHEMA `xupt-scholarship` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;

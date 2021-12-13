@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
+	"xupt-scholarship/global"
 	"xupt-scholarship/middleware"
 )
 
@@ -39,7 +41,7 @@ func Router() {
 		context.HTML("<h1>Hello World!!!</h1>")
 	})
 
-	server := &http.Server{Addr: ":8096"}
+	server := &http.Server{Addr: ":" + strconv.Itoa(global.Settings.Port)}
 	handleSignal(server)
 	err := app.Run(iris.Server(server), iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 false,
