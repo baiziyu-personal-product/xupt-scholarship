@@ -8,11 +8,13 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211119121342-226a4cb06497
 	github.com/kataras/rizla v0.1.1 // indirect
+	github.com/mattn/go-sqlite3 v1.14.10 // indirect
 	github.com/mlogclub/simple v1.1.12 // indirect
 	github.com/prometheus/tsdb v0.7.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
@@ -25,4 +27,7 @@ require (
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
 	gopkg.in/resty.v1 v1.12.0 // indirect
+	gorm.io/driver/mysql v1.0.1 // indirect
+	gorm.io/driver/sqlite v1.2.6 // indirect
+	gorm.io/gorm v1.22.5 // indirect
 )

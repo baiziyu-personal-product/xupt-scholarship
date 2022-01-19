@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"xupt-scholarship/db"
 	"xupt-scholarship/global"
 	"xupt-scholarship/middleware"
 )
@@ -38,6 +39,7 @@ func Router() {
 	})
 
 	app.Get("/", func(context *context.Context) {
+		db.Start()
 		context.HTML("<h1>Hello World!!!</h1>")
 	})
 
