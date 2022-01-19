@@ -3,7 +3,7 @@ package config
 type ServerConfig struct {
 	Name        string
 	Port        int
-	MsqlConfig  MysqlConfig
+	MysqlConfig MysqlConfig
 	RedisConfig RedisConfig
 	LogsAddr    string
 }
