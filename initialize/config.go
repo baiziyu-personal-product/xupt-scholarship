@@ -1,7 +1,6 @@
 package initialize
 
 import (
-	"github.com/fatih/color"
 	"github.com/spf13/viper"
 	"xupt-scholarship/config"
 	"xupt-scholarship/global"
@@ -20,5 +19,4 @@ func InitServeConfig() {
 	redisErr := v.UnmarshalKey("redis", &serverConfig.RedisConfig)
 	utils.DealErrors(serveErr, mysqlErr, redisErr)
 	global.Settings = serverConfig
-	color.Blue("[[Serve has been start🎉]]", global.Settings.LogsAddr)
 }

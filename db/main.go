@@ -10,25 +10,9 @@ import (
 
 func Start() {
 	db := connectDB()
-	add(db)
+	fmt.Println(db)
 }
 
-func add(db *gorm.DB) {
-	student := Students{
-		Name:       "1ssssdf",
-		Email:      "1234sfd56",
-		Phone:      "123456sd",
-		Password:   "123456",
-		AccessType: 0,
-		Access:     "1,3,4",
-	}
-	fmt.Printf("%v", student)
-	result := db.Table("students").Create(&student)
-
-	if result.Error != nil {
-		panic(result.Error)
-	}
-}
 
 func connectDB() *gorm.DB {
 	mysqlConfig := global.Settings.MysqlConfig
