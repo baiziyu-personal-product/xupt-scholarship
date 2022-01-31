@@ -26,3 +26,17 @@ type ApplicationList struct {
 	EndTime string  `gorm:"column: end_time"`
 	StatusInfo string  `gorm:"column: status_info"`
 }
+
+// ApplicationProcess 奖学金流程
+type ApplicationProcess struct {
+	Id string `gorm:"column:id"`
+	CreateTime string `gorm:"column:create_time"`
+	Status int `gorm:"column:status"`
+	EndTime string  `gorm:"column:end_time"`
+	ManageId int `gorm:"column:manage_id"`
+	Year int  `gorm:"column: year"`
+	Info string  `gorm:"column:info"`
+	Reviewers string  `gorm:"column:reviewers"`
+	Students string  `gorm:"column:students"`
+	ListIds string  `gorm:"column: list_ids"`
+}
