@@ -29,7 +29,7 @@ type ApplicationList struct {
 
 // ApplicationProcess 奖学金流程
 type ApplicationProcess struct {
-	Id string `gorm:"column:id"`
+	Id int `gorm:"column:id"`
 	CreateTime string `gorm:"column:create_time"`
 	Status int `gorm:"column:status"`
 	EndTime string  `gorm:"column:end_time"`
@@ -39,4 +39,19 @@ type ApplicationProcess struct {
 	Reviewers string  `gorm:"column:reviewers"`
 	Students string  `gorm:"column:students"`
 	ListIds string  `gorm:"column: list_ids"`
+}
+
+// Quantify 得分量化表
+type Quantify struct {
+	Id int `gorm:"column:id"`
+	Group string `gorm:"column:group"`
+	Category string `gorm:"column:category"`
+	Type string `gorm:"column:type"`
+	Score int `gorm:"column:score"`
+	Item string `gorm:"column:item"`
+	Info string `gorm:"column:info"`
+	CreateTime string `gorm:"column:create_time"`
+	ReviewerId int `gorm:"column:reviewer_id"`
+	UpdateTime string `gorm:"column: update_time"`
+	Effect int `gorm:"column: effect"`
 }
