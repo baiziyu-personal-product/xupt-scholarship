@@ -55,3 +55,13 @@ type Quantify struct {
 	UpdateTime string `gorm:"column: update_time"`
 	Effect int `gorm:"column: effect"`
 }
+
+// Reviewers 参与评审的人员
+type Reviewers struct {
+	Id int `gorm:"column:id"`
+	UserId int `gorm:"column:user_id"`
+	Name string `gorm:"column: name"`
+	Professional string `gorm:"column: professional"`
+	Institute string `gorm:"column: institute"`
+}
+
