@@ -65,3 +65,15 @@ type Reviewers struct {
 	Institute string `gorm:"column: institute"`
 }
 
+// Students 学生表
+type Students struct {
+	Id int 	`gorm:"column:id"`
+	UserId int `gorm:"column:user_id"`
+	Name int `gorm:"column: name"`
+	StudentId string `gorm:"column: student_id"`
+	Gender string `gorm:"column: gender"`
+	Professional string `gorm:"column: professional"`
+	Class int `gorm:"column:class"`
+	Session int `gorm:"column:session"`
+	ReceivingStatus int `gorm:"column: receiving_status"`
+}
