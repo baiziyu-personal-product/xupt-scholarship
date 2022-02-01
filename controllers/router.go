@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/mvc"
 	"github.com/mlogclub/simple"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"xupt-scholarship/db"
 	"xupt-scholarship/global"
 	"xupt-scholarship/middleware"
 )
@@ -34,14 +34,8 @@ func Router() {
 		}
 	})
 
-	app.Any("/", func(c *context.Context) {
-		_, _ = c.HTML("<h1>Powered by xupt-scholarshipt@baiziyu-fe - | ©2022</h1>")
-	})
-
-	app.Get("/", func(context *context.Context) {
-		db.Start()
-		context.HTML("<h1>Hello World!!!</h1>")
-	})
+	// MVC
+	mvc.Configure(app.Party("/user"), UserMVC)
 
 	server := &http.Server{Addr: ":" + strconv.Itoa(global.Settings.Port)}
 	handleSignal(server)
