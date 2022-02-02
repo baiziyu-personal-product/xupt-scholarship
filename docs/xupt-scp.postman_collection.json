@@ -1,0 +1,28 @@
+{
+	"info": {
+		"_postman_id": "91dca479-727a-45dd-a37a-af70af0335b5",
+		"name": "xupt-scp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/user/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {\r\n        \"email\": \"hello?@ss.com\",\r\n        \"password\": \"sdfsfsfs\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://192.168.31.12:8096/user/login",
+				"description": "# 登录接口\n\n*   返回时设置session"
+			},
+			"response": []
+		}
+	]
+}
