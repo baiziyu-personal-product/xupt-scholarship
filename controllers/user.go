@@ -13,7 +13,7 @@ type User struct {
 func UserMVC(app *mvc.Application) {
 	userSession := sessions.New(sessions.Config{
 		Cookie:  "xupt_session_id",
-		Expires: 24 * 5 * time.Hour,
+		Expires: 24 * 2 * time.Hour,
 	})
 	app.Register(userSession.Start).Handle(new(User))
 }
