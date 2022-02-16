@@ -126,6 +126,8 @@ github.com/cpuguy83/go-md2man v1.0.10/go.mod h1:SmD6nW6nTyfqj6ABTjUi3V3JVMnlJmwc
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f h1:q/DpyjJjZs94bziQ7YkBmIlpqbVP7yw179rnzoNVX1M=
+github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f/go.mod h1:QGrK8vMWWHQYQ3QU9bw9Y9OPNfxccGzfb41qjvVeXtY=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
@@ -347,6 +349,7 @@ github.com/kataras/golog v0.1.7/go.mod h1:jOSQ+C5fUqsNSwurB/oAHq1IFSb0KI3l6GMa7x
 github.com/kataras/iris/v12 v12.2.0-alpha/go.mod h1:gPkAD6kL4Q2s5YX913agSH3nNVrLPLAebyE3dI+3yEE=
 github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211119121342-226a4cb06497 h1:Zwjt3O+UgmZdREPR3TT6EV7FJ4J3tyVc5bRpPJLQ5qk=
 github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211119121342-226a4cb06497/go.mod h1:GQ1nY5d4pyQYMvYCteMUYUKeGqkWN221pZkTCKxN1A4=
+github.com/kataras/jwt v0.1.2 h1:827BBMK2/PQc1Y209cPKeAChyx1mvfW9I3LE0GJ5V8A=
 github.com/kataras/jwt v0.1.2/go.mod h1:4ss3aGJi58q3YGmhLUiOvNJnL7UlTXD7+Wf+skgsTmQ=
 github.com/kataras/neffos v0.0.16/go.mod h1:BqWkF1c6cSyqw85dfCdqXxK5cMo/hyBGhtNuFkxHyMg=
 github.com/kataras/neffos v0.0.18 h1:pIxrjV05Q7u6ViFH8eXoOJ53sMARviKz6Vfu5cd9Pb4=
