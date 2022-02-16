@@ -41,6 +41,9 @@ func Router() {
 	mvc.Configure(app.Party("/process"), ProcessMvc)
 	// 配置 申请 相关路由
 	mvc.Configure(app.Party("/apply"), ApplicationMVC)
+	// 配置验证码 相关路由
+	mvc.Configure(app.Party("/captcha"), CaptchaMVC)
+
 	server := &http.Server{Addr: ":" + strconv.Itoa(global.Settings.Port)}
 	handleSignal(server)
 	err := app.Run(iris.Server(server), iris.WithConfiguration(iris.Configuration{
