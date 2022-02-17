@@ -7,10 +7,34 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"xupt-scholarship/db"
 )
 
 type Captcha struct {
 	BaseController
+}
+
+type CaptchaStore struct {
+}
+
+func (CS *CaptchaStore) Set(id string, digits []byte) {
+	redis := db.UseRedis()
+	redis.SET(id, string(digits))
+	defer redis.Stop()
+}
+
+func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
+	redis := db.UseRedis()
+	code, err := redis.GET(id)
+	if clear {
+		redis.DEL(id)
+	}
+	if err != nil {
+		code = ""
+	}
+	defer redis.Stop()
+	digits = []byte(code)
+	return digits
 }
 
 func CaptchaMVC(app *mvc.Application) {
@@ -21,6 +45,9 @@ func (C *Captcha) GetBy(imgPath string) {
 	w, r := C.Ctx.ResponseWriter(), C.Ctx.Request()
 	point := strings.Index(imgPath, ".")
 	var content bytes.Buffer
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
 	w.Header().Set("Content-Type", "image/png")
 	code := imgPath[:point]
 	captcha.WriteImage(&content, code, captcha.StdWidth, captcha.StdHeight)
@@ -44,6 +71,7 @@ func (C *Captcha) PostVerify() ResponseFmtData {
 }
 
 func (C *Captcha) Get() ResponseFmtData {
+	captcha.SetCustomStore(new(CaptchaStore))
 	captchaId := captcha.New()
 	return ResponseFmtData{
 		Message: "success",

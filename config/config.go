@@ -18,6 +18,6 @@ type MysqlConfig struct {
 
 type RedisConfig struct {
 	Host     string
-	Port     string
+	Port     int
 	Password string
 }

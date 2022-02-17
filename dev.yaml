@@ -4,11 +4,11 @@ logsAddress: "./logs/"
 
 mysql:
   name: "root"
-  host: "123.56.239.54"
+  host: "127.0.0.1"
   port: 3306
   password: "586014BZYbzy"
   dbName: "xupt-scholarship"
 
 redis:
-  host: "123.56.239.54"
+  host: "127.0.0.1"
   port: 6379

@@ -1,22 +1,28 @@
 package db
 
 import (
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"strconv"
+	"xupt-scholarship/common"
 	"xupt-scholarship/global"
 )
 
-// ConnectDB 连接数据库
-func ConnectDB() *gorm.DB {
-	mysqlConfig := global.Settings.MysqlConfig
-	dsn := mysqlConfig.Name + ":" + mysqlConfig.Password + "@tcp(" + mysqlConfig.Host + ":" + strconv.Itoa(mysqlConfig.Port) + ")/" + mysqlConfig.DBName + "?charset=utf8&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN: dsn,
-	}), &gorm.Config{})
+// UseMysql 连接Mysql
+func UseMysql() *gorm.DB {
 
-	if err != nil {
-		panic(err)
+	return NewMysql()
+}
+
+// UseRedis 连接Redis
+func UseRedis() *RedisClient {
+
+	redisConfig := global.Settings.RedisConfig
+	redisOpt := common.RedisConnOpt{
+		Enable: true,
+		Host:   redisConfig.Host,
+		Port:   redisConfig.Port,
+		TTL:    240,
 	}
-	return db
+	redisCli := NewRedis(redisOpt)
+
+	return redisCli
 }
