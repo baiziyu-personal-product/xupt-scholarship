@@ -14,7 +14,7 @@ func LoggerServe(app *iris.Application) {
 			Method:             true,
 			Path:               true,
 			Query:              false,
-			MessageContextKeys: []string{"【Logger_MESSAGE】"},
+			MessageContextKeys: []string{"[Logger_MESSAGE]"},
 			MessageHeaderKeys:  []string{"[User-Agent]"},
 		},
 	)

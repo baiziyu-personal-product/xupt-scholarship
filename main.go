@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	initialize.InitServeConfig()
+	initialize.Init()
 
 	color.Green("Serve config has been emitted!!!")
 	controllers.Router()
