@@ -1,6 +1,6 @@
 package config
 
-type ServerConfig struct {
+type GlobalConfig struct {
 	Name        string
 	Port        int
 	MysqlConfig MysqlConfig
