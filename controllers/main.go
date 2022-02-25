@@ -35,14 +35,15 @@ func Router() {
 	})
 
 	// MVC
-	// 配置 用户 下相关路由
-	mvc.Configure(app.Party("/user"), UserMVC)
-	// 配置 进度管理 下相关路由
-	mvc.Configure(app.Party("/process"), ProcessMvc)
-	// 配置 申请 相关路由
-	mvc.Configure(app.Party("/apply"), ApplicationMVC)
+	mvc.Configure(app.Party("/sign"), SignMvc)
 	// 配置验证码 相关路由
 	mvc.Configure(app.Party("/captcha"), CaptchaMVC)
+	// 配置 用户 下相关路由
+	mvc.Configure(app.Party("/user", middleware.JwtVerify()), UserMVC)
+	// 配置 进度管理 下相关路由
+	mvc.Configure(app.Party("/process", middleware.JwtVerify()), ProcessMvc)
+	// 配置 申请 相关路由
+	mvc.Configure(app.Party("/apply", middleware.JwtVerify()), ApplicationMVC)
 
 	server := &http.Server{Addr: ":" + strconv.Itoa(global.Settings.Port)}
 	handleSignal(server)
