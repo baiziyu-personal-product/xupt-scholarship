@@ -10,7 +10,7 @@ import (
 func GetRequestParams(ctx iris.Context, data interface{}) {
 	var params RequestFmtData
 	ctx.ReadJSON(&params)
-	value, err := json.Marshal(params.Data)
+	value, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println("json.Marshal failed:", err)
 		return

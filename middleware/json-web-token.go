@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/middleware/jwt"
 	"time"
 )
@@ -19,19 +20,18 @@ type UserClaims struct {
 	Time  string `json:"time"`
 }
 
-func JwtVerify(app *iris.Application) {
+func JwtVerify() context.Handler {
 	verifier := jwt.NewVerifier(jwt.HS256, sigKey)
 	verifyMiddleware := verifier.Verify(func() interface{} {
 		return new(UserClaims)
 	})
-	app.Use(verifyMiddleware)
+	return verifyMiddleware
 }
 
-func GenerateToken(email string, id string) string {
+func GenerateToken(email string) string {
 	signer := jwt.NewSigner(jwt.HS256, sigKey, 2*24*time.Hour)
 	claims := UserClaims{
 		Email: email,
-		Id:    id,
 		Time:  time.Now().Format(YYYY_MM_DD_HH_mm_ss),
 	}
 	token, err := signer.Sign(claims)
