@@ -27,12 +27,19 @@ func UseSignMvc(app *mvc.Application) {
 func (s *SignMvc) PostLogin() ResponseFmtData {
 	var data mvc_struct.LoginForm
 	GetRequestParams(s.Ctx, &data)
-	s.Session.Set("xupt_session_id", data.Email)
-	return ResponseFmtData{
-		Message: "登录成功",
+	model := SignModel.Login(data)
+	res := ResponseFmtData{
+		Message: "登录失败",
 		Code:    1,
-		Data:    middleware.GenerateToken(data.Email),
+		Data:    nil,
 	}
+	if model.Error == nil {
+		res.Message = "登录成功"
+		res.Code = 1
+		res.Data = middleware.GenerateToken(data.Email)
+		s.Session.Set("xupt_session_id", data.Email)
+	}
+	return res
 }
 
 // PostRegister 注册

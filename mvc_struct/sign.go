@@ -14,6 +14,6 @@ type RegisterForm struct {
 	BaseSignForm
 	Phone     string `json:"phone"`
 	StudentId string `json:"student_id"`
-	ManagerId string `json:"manager_id"`
+	ManageId  string `json:"manage_id"`
 	Avatar    string `json:"avatar"`
 }

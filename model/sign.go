@@ -10,8 +10,22 @@ type SignModel struct {
 }
 
 // Login postLogin
-func (s *SignModel) Login(data mvc_struct.LoginForm) {
+func (s *SignModel) Login(data mvc_struct.LoginForm) DataBaseFmtData {
+	user := db.User{}
+	result := db.Mysql.Where(&db.User{
+		Email:    data.Email,
+		Password: data.Password,
+	}).First(&user)
 
+	res := DataBaseFmtData{
+		Message: "登录成功",
+		Data:    user.StudentId + user.ManageId,
+		Error:   result.Error,
+	}
+	if result.Error != nil || result.RowsAffected < 1 {
+		res.Message = "登录失败"
+	}
+	return res
 }
 
 // Register postRegister
