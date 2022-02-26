@@ -18,13 +18,13 @@ type CaptchaStore struct {
 }
 
 func (CS *CaptchaStore) Set(id string, digits []byte) {
-	redis := db.UseRedis()
+	redis := db.Redis
 	redis.SET(id, string(digits))
 	defer redis.Stop()
 }
 
 func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
-	redis := db.UseRedis()
+	redis := db.Redis
 	code, err := redis.GET(id)
 	if clear {
 		redis.DEL(id)
