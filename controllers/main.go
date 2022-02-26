@@ -35,7 +35,7 @@ func Router() {
 	})
 
 	// MVC
-	mvc.Configure(app.Party("/sign"), SignMvc)
+	mvc.Configure(app.Party("/sign"), UseSignMvc)
 	// 配置验证码 相关路由
 	mvc.Configure(app.Party("/captcha"), CaptchaMVC)
 	// 配置 用户 下相关路由
