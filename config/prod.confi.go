@@ -16,6 +16,7 @@ func GetProdGlobalConfig() GlobalConfig {
 			Host: "127.0.0.1",
 			Port: 6379,
 		},
-		LogsAddr: "./logs",
+		LogsAddr:  "./logs",
+		ImagePath: "/psr-repo/images/",
 	}
 }

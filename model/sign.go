@@ -37,7 +37,7 @@ func (s *SignModel) Register(data mvc_struct.RegisterForm) DataBaseFmtData {
 		Avatar:    data.Avatar,
 		Identity:  "",
 		CreateAt:  time.Now().Unix(),
-		ManageId:  data.ManagerId,
+		ManageId:  data.ManageId,
 		StudentId: data.StudentId,
 	}
 	result := db.Mysql.Create(&user)

@@ -38,6 +38,10 @@ func Router() {
 	mvc.Configure(app.Party("/sign"), UseSignMvc)
 	// 配置验证码 相关路由
 	mvc.Configure(app.Party("/captcha"), CaptchaMVC)
+
+	// 需要权限验证
+	// 上传文件
+	mvc.Configure(app.Party("/upload"), UseUploadMVC)
 	// 配置 用户 下相关路由
 	mvc.Configure(app.Party("/user", middleware.JwtVerify()), UserMVC)
 	// 配置 进度管理 下相关路由
