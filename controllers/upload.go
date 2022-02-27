@@ -1,14 +1,13 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"path/filepath"
 	"xupt-scholarship/global"
 )
 
-const maxSize = 16 * iris.MB
+const maxSize = 240 * iris.MB
 
 type UploadMvc struct {
 	BaseController
@@ -16,6 +15,26 @@ type UploadMvc struct {
 
 func UseUploadMVC(app *mvc.Application) {
 	app.Handle(new(UploadMvc))
+}
+
+func (u *UploadMvc) PostSingle() ResponseFmtData {
+	u.Ctx.SetMaxRequestBodySize(maxSize)
+	_, fileHeader, err := u.Ctx.FormFile("file")
+	if err != nil {
+		u.Ctx.StopWithError(iris.StatusBadRequest, err)
+		return ResponseFmtData{
+			Message: "failed",
+			Code:    0,
+			Data:    nil,
+		}
+	}
+	dest, _ := filepath.Abs(filepath.Join(global.Settings.ImagePath, fileHeader.Filename))
+	u.Ctx.SaveFormFile(fileHeader, dest)
+	return ResponseFmtData{
+		Message: "success",
+		Code:    0,
+		Data:    dest,
+	}
 }
 
 func (u *UploadMvc) Post() ResponseFmtData {
@@ -30,9 +49,8 @@ func (u *UploadMvc) Post() ResponseFmtData {
 	}
 	var res []string
 	for _, file := range files {
-		p, _ := filepath.Abs(global.Settings.ImagePath + file.Filename)
-		fmt.Println(p)
-		res = append(res, global.Settings.ImagePath+file.Filename)
+		filePath, _ := filepath.Abs(filepath.Join(global.Settings.ImagePath, file.Filename))
+		res = append(res, filePath)
 	}
 	return ResponseFmtData{
 		Message: "Success",
