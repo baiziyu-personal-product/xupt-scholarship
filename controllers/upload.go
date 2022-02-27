@@ -37,6 +37,14 @@ func (u *UploadMvc) PostSingle() ResponseFmtData {
 	}
 }
 
+func (u *UploadMvc) Options() ResponseFmtData {
+	return ResponseFmtData{
+		Message: "success",
+		Code:    0,
+		Data:    nil,
+	}
+}
+
 func (u *UploadMvc) Post() ResponseFmtData {
 	files, _, err := u.Ctx.UploadFormFiles(global.Settings.ImagePath)
 	if err != nil {
