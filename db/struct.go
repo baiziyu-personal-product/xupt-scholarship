@@ -11,3 +11,16 @@ type User struct {
 	ManageId  string `gorm:"column:manage_id"`
 	StudentId string `gorm:"column:student_id"`
 }
+
+// Application 申请表单
+type Application struct {
+	Form      interface{} `gorm:"column:form"`
+	History   interface{} `gorm:"column:history"`
+	CreateAt  int64       `gorm:"column:create_at"`
+	EditAt    int64       `gorm:"column:edit_at"`
+	Score     interface{} `gorm:"column:score"`
+	StudentId string      `gorm:"column:student_id"`
+	Status    int         `gorm:"column:status"`
+	Step      string      `gorm:"column:step"`
+	Year      int         `gorm:"column:year"`
+}
