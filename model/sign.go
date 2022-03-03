@@ -10,7 +10,7 @@ type SignModel struct {
 }
 
 // Login postLogin
-func (s *SignModel) Login(data mvc_struct.LoginForm) DataBaseFmtData {
+func (s *SignModel) Login(data mvc_struct.SignOfLogin) DataBaseFmtData {
 	user := db.User{}
 	result := db.Mysql.Where(&db.User{
 		Email:    data.Email,
@@ -29,7 +29,7 @@ func (s *SignModel) Login(data mvc_struct.LoginForm) DataBaseFmtData {
 }
 
 // Register postRegister
-func (s *SignModel) Register(data mvc_struct.RegisterForm) DataBaseFmtData {
+func (s *SignModel) Register(data mvc_struct.SignOfRegister) DataBaseFmtData {
 	user := db.User{
 		Email:     data.Email,
 		Phone:     data.Phone,

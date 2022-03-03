@@ -25,7 +25,7 @@ func UseSignMvc(app *mvc.Application) {
 
 // PostLogin 登录
 func (s *SignMvc) PostLogin() ResponseFmtData {
-	var data mvc_struct.LoginForm
+	var data mvc_struct.SignOfLogin
 	GetRequestParams(s.Ctx, &data)
 	signModel := SignModel.Login(data)
 	res := ResponseFmtData{
@@ -44,7 +44,7 @@ func (s *SignMvc) PostLogin() ResponseFmtData {
 
 // PostRegister 注册
 func (s *SignMvc) PostRegister() ResponseFmtData {
-	var data mvc_struct.RegisterForm
+	var data mvc_struct.SignOfRegister
 	GetRequestParams(s.Ctx, &data)
 	signModel := SignModel.Register(data)
 	res := ResponseFmtData{
@@ -63,7 +63,7 @@ func (s *SignMvc) PostRegister() ResponseFmtData {
 
 // PostForget 忘记密码
 func (s *SignMvc) PostForget() ResponseFmtData {
-	var data mvc_struct.ForgetForm
+	var data mvc_struct.SignOfForget
 	GetRequestParams(s.Ctx, &data)
 	return ResponseFmtData{
 		Message: "登录成功",

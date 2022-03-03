@@ -8,7 +8,7 @@ type User struct {
 	BaseController
 }
 
-func UserMVC(app *mvc.Application) {
+func UseUserMVC(app *mvc.Application) {
 	app.Handle(new(User))
 }
 

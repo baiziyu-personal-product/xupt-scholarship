@@ -10,7 +10,7 @@ import (
 	"xupt-scholarship/db"
 )
 
-type Captcha struct {
+type CaptchaMVC struct {
 	BaseController
 }
 
@@ -37,11 +37,11 @@ func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
 	return digits
 }
 
-func CaptchaMVC(app *mvc.Application) {
-	app.Handle(new(Captcha))
+func UseCaptchaMVC(app *mvc.Application) {
+	app.Handle(new(CaptchaMVC))
 }
 
-func (C *Captcha) GetBy(imgPath string) {
+func (C *CaptchaMVC) GetBy(imgPath string) {
 	w, r := C.Ctx.ResponseWriter(), C.Ctx.Request()
 	point := strings.Index(imgPath, ".")
 	var content bytes.Buffer
@@ -60,7 +60,7 @@ type VerifyData struct {
 }
 
 // PostVerify 判断验证码是否正确
-func (C *Captcha) PostVerify() ResponseFmtData {
+func (C *CaptchaMVC) PostVerify() ResponseFmtData {
 	var data VerifyData
 	GetRequestParams(C.Ctx, &data)
 	return ResponseFmtData{
@@ -70,7 +70,7 @@ func (C *Captcha) PostVerify() ResponseFmtData {
 	}
 }
 
-func (C *Captcha) Get() ResponseFmtData {
+func (C *CaptchaMVC) Get() ResponseFmtData {
 	captcha.SetCustomStore(new(CaptchaStore))
 	captchaId := captcha.New()
 	return ResponseFmtData{
@@ -80,7 +80,7 @@ func (C *Captcha) Get() ResponseFmtData {
 	}
 }
 
-func (C *Captcha) GetReload() ResponseFmtData {
+func (C *CaptchaMVC) GetReload() ResponseFmtData {
 	code := C.Ctx.URLParam("code")
 	return ResponseFmtData{
 		Message: "success",

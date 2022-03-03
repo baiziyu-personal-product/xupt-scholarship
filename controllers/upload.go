@@ -9,15 +9,15 @@ import (
 
 const maxSize = 240 * iris.MB
 
-type UploadMvc struct {
+type UploadMVC struct {
 	BaseController
 }
 
 func UseUploadMVC(app *mvc.Application) {
-	app.Handle(new(UploadMvc))
+	app.Handle(new(UploadMVC))
 }
 
-func (u *UploadMvc) PostSingle() ResponseFmtData {
+func (u *UploadMVC) PostSingle() ResponseFmtData {
 	u.Ctx.SetMaxRequestBodySize(maxSize)
 	_, fileHeader, err := u.Ctx.FormFile("file")
 	if err != nil {
@@ -37,7 +37,7 @@ func (u *UploadMvc) PostSingle() ResponseFmtData {
 	}
 }
 
-func (u *UploadMvc) Options() ResponseFmtData {
+func (u *UploadMVC) Options() ResponseFmtData {
 	return ResponseFmtData{
 		Message: "success",
 		Code:    0,
@@ -45,7 +45,7 @@ func (u *UploadMvc) Options() ResponseFmtData {
 	}
 }
 
-func (u *UploadMvc) Post() ResponseFmtData {
+func (u *UploadMVC) Post() ResponseFmtData {
 	files, _, err := u.Ctx.UploadFormFiles(global.Settings.ImagePath)
 	if err != nil {
 		u.Ctx.StopWithStatus(iris.StatusInternalServerError)

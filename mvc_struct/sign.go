@@ -5,12 +5,12 @@ type BaseSignForm struct {
 	Password string `json:"password"`
 }
 
-type LoginForm struct {
+type SignOfLogin struct {
 	BaseSignForm
 	Remember bool `json:"remember"`
 }
 
-type RegisterForm struct {
+type SignOfRegister struct {
 	BaseSignForm
 	Phone     string `json:"phone"`
 	StudentId string `json:"student_id"`
@@ -18,7 +18,7 @@ type RegisterForm struct {
 	Avatar    string `json:"avatar"`
 }
 
-type ForgetForm struct {
+type SignOfForget struct {
 	Phone     string `json:"phone"`
 	StudentId string `json:"student_id"`
 	ManagerId string `json:"manager_id"`

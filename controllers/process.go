@@ -2,15 +2,15 @@ package controllers
 
 import "github.com/kataras/iris/v12/mvc"
 
-type Process struct {
+type ProcessMVC struct {
 	BaseController
 }
 
-func ProcessMvc(app *mvc.Application) {
-	app.Handle(new(Process))
+func UseProcessMVC(app *mvc.Application) {
+	app.Handle(new(ProcessMVC))
 }
 
-func (p *Process) Get() ResponseFmtData {
+func (p *ProcessMVC) Get() ResponseFmtData {
 	return ResponseFmtData{
 		Code:    1,
 		Message: "成功拉取申请流程",
@@ -18,7 +18,7 @@ func (p *Process) Get() ResponseFmtData {
 	}
 }
 
-func (p *Process) Post() ResponseFmtData {
+func (p *ProcessMVC) Post() ResponseFmtData {
 	return ResponseFmtData{
 		Message: "处理成功",
 		Code:    1,
@@ -26,7 +26,7 @@ func (p *Process) Post() ResponseFmtData {
 	}
 }
 
-func (p *Process) GetSearch() ResponseFmtData {
+func (p *ProcessMVC) GetSearch() ResponseFmtData {
 	return ResponseFmtData{
 		Message: "成功",
 		Code:    0,
