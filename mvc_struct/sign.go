@@ -17,3 +17,10 @@ type RegisterForm struct {
 	ManageId  string `json:"manage_id"`
 	Avatar    string `json:"avatar"`
 }
+
+type ForgetForm struct {
+	Phone     string `json:"phone"`
+	StudentId string `json:"student_id"`
+	ManagerId string `json:"manager_id"`
+	Email     string `json:"email"`
+}

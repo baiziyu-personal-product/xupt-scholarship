@@ -27,13 +27,13 @@ func UseSignMvc(app *mvc.Application) {
 func (s *SignMvc) PostLogin() ResponseFmtData {
 	var data mvc_struct.LoginForm
 	GetRequestParams(s.Ctx, &data)
-	model := SignModel.Login(data)
+	signModel := SignModel.Login(data)
 	res := ResponseFmtData{
 		Message: "登录失败",
 		Code:    1,
 		Data:    nil,
 	}
-	if model.Error == nil {
+	if signModel.Error == nil {
 		res.Message = "登录成功"
 		res.Code = 1
 		res.Data = middleware.GenerateToken(data.Email)
@@ -46,14 +46,14 @@ func (s *SignMvc) PostLogin() ResponseFmtData {
 func (s *SignMvc) PostRegister() ResponseFmtData {
 	var data mvc_struct.RegisterForm
 	GetRequestParams(s.Ctx, &data)
-	model := SignModel.Register(data)
+	signModel := SignModel.Register(data)
 	res := ResponseFmtData{
-		Message: model.Message,
+		Message: signModel.Message,
 		Code:    0,
 		Data:    nil,
 	}
 
-	if model.Error == nil {
+	if signModel.Error == nil {
 		s.Session.Set("xupt_session_id", data.Email)
 		res.Data = middleware.GenerateToken(data.Email)
 		res.Code = 1
@@ -61,16 +61,9 @@ func (s *SignMvc) PostRegister() ResponseFmtData {
 	return res
 }
 
-type ForgetForm struct {
-	Phone     string `json:"phone"`
-	StudentId string `json:"student_id"`
-	ManagerId string `json:"manager_id"`
-	Email     string `json:"email"`
-}
-
 // PostForget 忘记密码
 func (s *SignMvc) PostForget() ResponseFmtData {
-	var data mvc_struct.LoginForm
+	var data mvc_struct.ForgetForm
 	GetRequestParams(s.Ctx, &data)
 	return ResponseFmtData{
 		Message: "登录成功",

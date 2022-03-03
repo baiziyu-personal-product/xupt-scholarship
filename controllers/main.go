@@ -41,7 +41,7 @@ func Router() {
 
 	// 需要权限验证
 	// 上传文件
-	mvc.Configure(app.Party("/upload"), UseUploadMVC)
+	mvc.Configure(app.Party("/upload", middleware.JwtVerify()), UseUploadMVC)
 	// 配置 用户 下相关路由
 	mvc.Configure(app.Party("/user", middleware.JwtVerify()), UserMVC)
 	// 配置 进度管理 下相关路由
