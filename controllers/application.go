@@ -2,15 +2,23 @@ package controllers
 
 import "github.com/kataras/iris/v12/mvc"
 
-type Application struct {
+type ApplyMVC struct {
 	BaseController
 }
 
-func ApplicationMVC(app *mvc.Application) {
-	app.Handle(new(Application))
+func UseApplyMVC(app *mvc.Application) {
+	app.Handle(new(ApplyMVC))
 }
 
-func (a *Application) Get() ResponseFmtData {
+func (a *ApplyMVC) GetBy(applyId int64) ResponseFmtData {
+	return ResponseFmtData{
+		Message: "",
+		Code:    1,
+		Data:    applyId,
+	}
+}
+
+func (a *ApplyMVC) Post() ResponseFmtData {
 	return ResponseFmtData{
 		Message: "",
 		Code:    1,
@@ -18,10 +26,10 @@ func (a *Application) Get() ResponseFmtData {
 	}
 }
 
-func (a *Application) Post() ResponseFmtData {
+func (a *ApplyMVC) PutBy(applyId int64) ResponseFmtData {
 	return ResponseFmtData{
 		Message: "",
-		Code:    1,
-		Data:    nil,
+		Code:    0,
+		Data:    applyId,
 	}
 }

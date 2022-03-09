@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 	"xupt-scholarship/common"
+	"xupt-scholarship/global"
 )
 
 // RedisClient redis client instance
@@ -19,10 +20,17 @@ type RedisClient struct {
 }
 
 // NewRedis new redis client
-func NewRedis(opt common.RedisConnOpt) *RedisClient {
+func NewRedis() *RedisClient {
+	redisConfig := global.Settings.RedisConfig
+	redisOpt := common.RedisConnOpt{
+		Enable: true,
+		Host:   redisConfig.Host,
+		Port:   redisConfig.Port,
+		TTL:    240,
+	}
 	return &RedisClient{
-		connOpt: opt,
-		pool:    newPool(opt),
+		connOpt: redisOpt,
+		pool:    newPool(redisOpt),
 		chanRx:  make(chan common.RedisDataArray, 100),
 	}
 }
@@ -110,7 +118,6 @@ func (r *RedisClient) Error() error {
 }
 
 // 常用Redis操作命令的封装
-// http://redis.io/commands
 
 // KEYS get patten key array
 func (r *RedisClient) KEYS(patten string) ([]string, error) {
