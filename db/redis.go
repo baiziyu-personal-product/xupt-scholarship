@@ -118,7 +118,6 @@ func (r *RedisClient) Error() error {
 }
 
 // 常用Redis操作命令的封装
-// http://redis.io/commands
 
 // KEYS get patten key array
 func (r *RedisClient) KEYS(patten string) ([]string, error) {
