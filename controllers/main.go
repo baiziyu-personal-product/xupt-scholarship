@@ -43,7 +43,7 @@ func Router() {
 	// 上传文件
 	mvc.Configure(app.Party("/upload", middleware.JwtVerify()), UseUploadMVC)
 	// 配置 用户 下相关路由
-	mvc.Configure(app.Party("/user", middleware.JwtVerify()), UseUserMVC)
+	mvc.Configure(app.Party("/user"), UseUserMVC)
 	// 配置 进度管理 下相关路由
 	mvc.Configure(app.Party("/process", middleware.JwtVerify()), UseProcessMVC)
 	// 配置 申请 相关路由
