@@ -16,6 +16,11 @@ import (
 	"xupt-scholarship/middleware"
 )
 
+var (
+	userSession = global.UserSession
+	sessionId   = global.SessionId
+)
+
 func Router() {
 	app := iris.New()
 	app.Logger().SetLevel("warn")

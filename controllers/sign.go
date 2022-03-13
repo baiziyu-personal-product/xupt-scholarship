@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/global"
 	"xupt-scholarship/middleware"
 	"xupt-scholarship/model"
 	"xupt-scholarship/mvc_struct"
@@ -14,52 +15,38 @@ type SignMvc struct {
 var SignModel model.SignModel
 
 func UseSignMvc(app *mvc.Application) {
-	app.Register(UserSession.Start).Handle(new(SignMvc))
+	app.Register(userSession.Start).Handle(new(SignMvc))
 }
 
 // PostLogin 登录
-func (s *SignMvc) PostLogin() ResponseFmtData {
+func (s *SignMvc) PostLogin() BaseControllerFmtData {
 	var data mvc_struct.SignOfLogin
 	GetRequestParams(s.Ctx, &data)
 	signModel := SignModel.Login(data)
-	res := ResponseFmtData{
-		Message: "登录失败",
-		Code:    1,
-		Data:    nil,
+	if signModel.Code == global.SuccessCode {
+		signModel.Data = middleware.GenerateToken(data.Email)
+		s.Session.Set(sessionId, data.Email)
 	}
-	if signModel.Error == nil {
-		res.Message = "登录成功"
-		res.Code = 1
-		res.Data = middleware.GenerateToken(data.Email)
-		s.Session.Set(SessionId, data.Email)
-	}
-	return res
+	return HandleControllerRes(signModel, "登录")
 }
 
 // PostRegister 注册
-func (s *SignMvc) PostRegister() ResponseFmtData {
+func (s *SignMvc) PostRegister() BaseControllerFmtData {
 	var data mvc_struct.SignOfRegister
 	GetRequestParams(s.Ctx, &data)
 	signModel := SignModel.Register(data)
-	res := ResponseFmtData{
-		Message: signModel.Message,
-		Code:    0,
-		Data:    nil,
+	if signModel.Code == global.SuccessCode {
+		signModel.Data = middleware.GenerateToken(data.Email)
+		s.Session.Set(sessionId, data.Email)
 	}
-
-	if signModel.Error == nil {
-		s.Session.Set(SessionId, data.Email)
-		res.Data = middleware.GenerateToken(data.Email)
-		res.Code = 1
-	}
-	return res
+	return HandleControllerRes(signModel, "注册")
 }
 
 // PostForget 忘记密码
-func (s *SignMvc) PostForget() ResponseFmtData {
+func (s *SignMvc) PostForget() BaseControllerFmtData {
 	var data mvc_struct.SignOfForget
 	GetRequestParams(s.Ctx, &data)
-	return ResponseFmtData{
+	return BaseControllerFmtData{
 		Message: "登录成功",
 		Code:    1,
 		Data:    middleware.GenerateToken(data.Email),

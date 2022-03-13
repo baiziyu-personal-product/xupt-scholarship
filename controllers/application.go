@@ -10,24 +10,24 @@ func UseApplyMVC(app *mvc.Application) {
 	app.Handle(new(ApplyMVC))
 }
 
-func (a *ApplyMVC) GetBy(applyId int64) ResponseFmtData {
-	return ResponseFmtData{
+func (a *ApplyMVC) GetBy(applyId int64) BaseControllerFmtData {
+	return BaseControllerFmtData{
 		Message: "",
 		Code:    1,
 		Data:    applyId,
 	}
 }
 
-func (a *ApplyMVC) Post() ResponseFmtData {
-	return ResponseFmtData{
+func (a *ApplyMVC) Post() BaseControllerFmtData {
+	return BaseControllerFmtData{
 		Message: "",
 		Code:    1,
 		Data:    nil,
 	}
 }
 
-func (a *ApplyMVC) PutBy(applyId int64) ResponseFmtData {
-	return ResponseFmtData{
+func (a *ApplyMVC) PutBy(applyId int64) BaseControllerFmtData {
+	return BaseControllerFmtData{
 		Message: "",
 		Code:    0,
 		Data:    applyId,

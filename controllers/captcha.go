@@ -60,29 +60,29 @@ type VerifyData struct {
 }
 
 // PostVerify 判断验证码是否正确
-func (C *CaptchaMVC) PostVerify() ResponseFmtData {
+func (C *CaptchaMVC) PostVerify() BaseControllerFmtData {
 	var data VerifyData
 	GetRequestParams(C.Ctx, &data)
-	return ResponseFmtData{
+	return BaseControllerFmtData{
 		Message: "verifyed",
 		Code:    0,
 		Data:    captcha.VerifyString(data.Code, data.InputCode),
 	}
 }
 
-func (C *CaptchaMVC) Get() ResponseFmtData {
+func (C *CaptchaMVC) Get() BaseControllerFmtData {
 	captcha.SetCustomStore(new(CaptchaStore))
 	captchaId := captcha.New()
-	return ResponseFmtData{
+	return BaseControllerFmtData{
 		Message: "success",
 		Code:    0,
 		Data:    captchaId,
 	}
 }
 
-func (C *CaptchaMVC) GetReload() ResponseFmtData {
+func (C *CaptchaMVC) GetReload() BaseControllerFmtData {
 	code := C.Ctx.URLParam("code")
-	return ResponseFmtData{
+	return BaseControllerFmtData{
 		Message: "success",
 		Code:    0,
 		Data:    captcha.Reload(code),

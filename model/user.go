@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"xupt-scholarship/db"
 )
 
@@ -17,7 +16,7 @@ type UserBaseInfo struct {
 	Avatar string `json:"avatar"`
 }
 
-func (u *UserModel) GetUserList() DataBaseFmtData {
+func (u *UserModel) GetUserList() BaseModelFmtData {
 	result := db.Mysql.Find(&users)
 	var userList []UserBaseInfo
 	for _, user := range users {
@@ -29,11 +28,7 @@ func (u *UserModel) GetUserList() DataBaseFmtData {
 			})
 		}
 	}
-	return DataBaseFmtData{
-		Message: "success",
-		Data:    userList,
-		Error:   result.Error,
-	}
+	return HandleDBData(result, userList)
 }
 
 type LoginUserInfo struct {
@@ -44,14 +39,7 @@ type LoginUserInfo struct {
 	ManagerId string `json:"manager_id"`
 }
 
-func (u *UserModel) GetUser(email string) DataBaseFmtData {
-	if email == "" {
-		return DataBaseFmtData{
-			Message: "Can't useEmpty String!!!",
-			Data:    nil,
-			Error:   nil,
-		}
-	}
+func (u *UserModel) GetUser(email string) BaseModelFmtData {
 	result := db.Mysql.Where(&db.User{Email: email}).First(&user)
 	var userInfo LoginUserInfo
 	userInfo = LoginUserInfo{
@@ -65,10 +53,5 @@ func (u *UserModel) GetUser(email string) DataBaseFmtData {
 		StudentId: user.StudentId,
 		ManagerId: user.ManageId,
 	}
-	fmt.Println("userDB", userInfo)
-	return DataBaseFmtData{
-		Message: "success",
-		Data:    userInfo,
-		Error:   result.Error,
-	}
+	return HandleDBData(result, userInfo)
 }
