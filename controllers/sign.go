@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"github.com/kataras/iris/v12/mvc"
-	"github.com/kataras/iris/v12/sessions"
-	"time"
 	"xupt-scholarship/middleware"
 	"xupt-scholarship/model"
 	"xupt-scholarship/mvc_struct"
@@ -16,11 +14,7 @@ type SignMvc struct {
 var SignModel model.SignModel
 
 func UseSignMvc(app *mvc.Application) {
-	userSession := sessions.New(sessions.Config{
-		Cookie:  "xupt_session_id",
-		Expires: 24 * 2 * time.Hour,
-	})
-	app.Register(userSession.Start).Handle(new(SignMvc))
+	app.Register(UserSession.Start).Handle(new(SignMvc))
 }
 
 // PostLogin 登录
@@ -37,7 +31,7 @@ func (s *SignMvc) PostLogin() ResponseFmtData {
 		res.Message = "登录成功"
 		res.Code = 1
 		res.Data = middleware.GenerateToken(data.Email)
-		s.Session.Set("xupt_session_id", data.Email)
+		s.Session.Set(SessionId, data.Email)
 	}
 	return res
 }
@@ -54,7 +48,7 @@ func (s *SignMvc) PostRegister() ResponseFmtData {
 	}
 
 	if signModel.Error == nil {
-		s.Session.Set("xupt_session_id", data.Email)
+		s.Session.Set(SessionId, data.Email)
 		res.Data = middleware.GenerateToken(data.Email)
 		res.Code = 1
 	}
