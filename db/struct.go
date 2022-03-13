@@ -3,6 +3,7 @@ package db
 // User 用户表
 type User struct {
 	Email     string `gorm:"column:email"`
+	Name      string `gorm:"column:name"`
 	Phone     string `gorm:"column:phone"`
 	Password  string `gorm:"column:password"`
 	Avatar    string `gorm:"column:avatar"`

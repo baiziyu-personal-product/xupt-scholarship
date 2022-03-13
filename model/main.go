@@ -1,17 +1,38 @@
 package model
 
-import "xupt-scholarship/db"
+import (
+	"gorm.io/gorm"
+	"xupt-scholarship/global"
+)
 
-// CheckDuplicatesRows 检查是否存在重复键值
-func CheckDuplicatesRows(table interface{}, key string, value interface{}) (bool, error) {
-	res := db.Mysql.First(&table, key+" = ?", value)
-	if res.Error != nil {
-		return false, res.Error
-	} else {
-		if res.RowsAffected > 0 {
-			return true, nil
-		} else {
-			return true, nil
-		}
+type BaseModelFmtData struct {
+	Message string
+	Data    interface{}
+	Error   error
+	Code    int
+}
+
+var (
+	successData = BaseModelFmtData{
+		Message: "[✅]Database processing complete~",
+		Data:    nil,
+		Error:   nil,
+		Code:    global.SuccessCode,
 	}
+	errorData = BaseModelFmtData{
+		Message: "[❎]Database processing failed~",
+		Data:    nil,
+		Error:   nil,
+		Code:    global.ErrorCode,
+	}
+)
+
+// HandleDBData 处理数据库错误
+func HandleDBData(result *gorm.DB, data interface{}) BaseModelFmtData {
+	if result.Error != nil {
+		errorData.Error = result.Error
+		return errorData
+	}
+	successData.Data = data
+	return successData
 }
