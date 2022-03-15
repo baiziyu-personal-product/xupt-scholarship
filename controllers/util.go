@@ -38,3 +38,18 @@ func HandleControllerRes(modelData model.BaseModelFmtData, message string) BaseC
 	}
 	return data
 }
+
+// HandleControllerRes 处理Controller返回值
+func HandleControllerRes(modelData model.BaseModelFmtData, message string) BaseControllerFmtData {
+	data := BaseControllerFmtData{
+		Message: message,
+		Code:    modelData.Code,
+		Data:    modelData.Error,
+	}
+	if modelData.Code == global.SuccessCode {
+		data.Message += "成功"
+	} else {
+		data.Message += "失败"
+	}
+	return data
+}
