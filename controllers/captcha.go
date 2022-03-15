@@ -19,20 +19,22 @@ type CaptchaStore struct {
 
 func (CS *CaptchaStore) Set(id string, digits []byte) {
 	redis := db.Redis
-	redis.SET(id, string(digits))
-	defer redis.Stop()
+	if _, err := redis.SET(id, string(digits)); err != nil {
+		panic(err)
+	}
 }
 
 func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
 	redis := db.Redis
 	code, err := redis.GET(id)
 	if clear {
-		redis.DEL(id)
+		if _, delErr := redis.DEL(id); delErr != nil {
+			panic(delErr)
+		}
 	}
 	if err != nil {
 		code = ""
 	}
-	defer redis.Stop()
 	digits = []byte(code)
 	return digits
 }
@@ -43,14 +45,15 @@ func UseCaptchaMVC(app *mvc.Application) {
 
 func (C *CaptchaMVC) GetBy(imgPath string) {
 	w, r := C.Ctx.ResponseWriter(), C.Ctx.Request()
-	point := strings.Index(imgPath, ".")
 	var content bytes.Buffer
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "0")
 	w.Header().Set("Content-Type", "image/png")
-	code := imgPath[:point]
-	captcha.WriteImage(&content, code, captcha.StdWidth, captcha.StdHeight)
+	code := imgPath[:strings.Index(imgPath, "-")]
+	if err := captcha.WriteImage(&content, code, 180, 60); err != nil {
+		panic(err)
+	}
 	http.ServeContent(w, r, imgPath, time.Time{}, bytes.NewReader(content.Bytes()))
 }
 
@@ -64,7 +67,7 @@ func (C *CaptchaMVC) PostVerify() BaseControllerFmtData {
 	var data VerifyData
 	GetRequestParams(C.Ctx, &data)
 	return BaseControllerFmtData{
-		Message: "verifyed",
+		Message: "verified",
 		Code:    0,
 		Data:    captcha.VerifyString(data.Code, data.InputCode),
 	}

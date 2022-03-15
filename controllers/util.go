@@ -11,13 +11,17 @@ import (
 // GetRequestParams 获取请求参数
 func GetRequestParams(ctx iris.Context, data interface{}) {
 	var params interface{}
-	ctx.ReadJSON(&params)
+	if ctxErr := ctx.ReadJSON(&params); ctxErr != nil {
+		panic(ctxErr)
+	}
 	value, err := json.Marshal(params)
 	if err != nil {
 		fmt.Println("json.Marshal failed:", err)
 		return
 	}
-	json.Unmarshal(value, data)
+	if err := json.Unmarshal(value, data); err != nil {
+		panic(err)
+	}
 }
 
 // HandleControllerRes 处理Controller返回值
@@ -25,7 +29,7 @@ func HandleControllerRes(modelData model.BaseModelFmtData, message string) BaseC
 	data := BaseControllerFmtData{
 		Message: message,
 		Code:    modelData.Code,
-		Data:    modelData.Error,
+		Data:    modelData.Data,
 	}
 	if modelData.Code == global.SuccessCode {
 		data.Message += "成功"
