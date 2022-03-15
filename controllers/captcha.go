@@ -19,18 +19,14 @@ type CaptchaStore struct {
 
 func (CS *CaptchaStore) Set(id string, digits []byte) {
 	redis := db.Redis
-	if _, err := redis.SET(id, string(digits)); err != nil {
-		panic(err)
-	}
+	redis.SET(id, string(digits))
 }
 
 func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
 	redis := db.Redis
 	code, err := redis.GET(id)
 	if clear {
-		if _, delErr := redis.DEL(id); delErr != nil {
-			panic(delErr)
-		}
+		redis.DEL(id)
 	}
 	if err != nil {
 		code = ""
@@ -51,9 +47,7 @@ func (C *CaptchaMVC) GetBy(imgPath string) {
 	w.Header().Set("Expires", "0")
 	w.Header().Set("Content-Type", "image/png")
 	code := imgPath[:strings.Index(imgPath, "-")]
-	if err := captcha.WriteImage(&content, code, 180, 60); err != nil {
-		panic(err)
-	}
+	captcha.WriteImage(&content, code, 180, 60)
 	http.ServeContent(w, r, imgPath, time.Time{}, bytes.NewReader(content.Bytes()))
 }
 
