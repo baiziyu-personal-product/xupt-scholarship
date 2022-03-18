@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12/mvc"
 	"path/filepath"
 	"xupt-scholarship/global"
+	"xupt-scholarship/mvc_struct"
 )
 
 const maxSize = 240 * iris.MB
@@ -64,5 +65,15 @@ func (u *UploadMVC) Post() BaseControllerFmtData {
 		Message: "Success",
 		Code:    1,
 		Data:    res,
+	}
+}
+
+func (u *UploadMVC) PostStudentList() BaseControllerFmtData {
+	var reqData []mvc_struct.StudentItem
+	GetRequestParams(u.Ctx, &reqData)
+	return BaseControllerFmtData{
+		Message: "Success",
+		Code:    1,
+		Data:    reqData,
 	}
 }
