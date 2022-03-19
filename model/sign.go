@@ -1,7 +1,6 @@
 package model
 
 import (
-	"time"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
 )
@@ -28,7 +27,6 @@ func (s *SignModel) Register(data mvc_struct.SignOfRegister) BaseModelFmtData {
 		Password:  data.Password,
 		Avatar:    data.Avatar,
 		Identity:  "",
-		CreateAt:  time.Now().Unix(),
 		ManageId:  data.ManageId,
 		StudentId: data.StudentId,
 	}

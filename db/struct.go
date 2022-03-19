@@ -1,35 +1,39 @@
 package db
 
+type BaseDataModel struct {
+	ID       int   `gorm:"primaryKey;column:id;autoIncrement;type:int;"`
+	CreateAt int64 `gorm:"autoCreateTime:nano;type:bigint;column:create_at"`
+	UpdateAt int64 `gorm:"autoUpdateTime:nano;type:bigint;column:update_at"`
+}
+
 // User 用户表
 type User struct {
-	Email     string `gorm:"column:email"`
-	Name      string `gorm:"column:name"`
-	Phone     string `gorm:"column:phone"`
-	Password  string `gorm:"column:password"`
-	Avatar    string `gorm:"column:avatar"`
-	Identity  string `gorm:"column:identity"`
-	CreateAt  int64  `gorm:"column:create_at"`
-	ManageId  string `gorm:"column:manage_id"`
-	StudentId string `gorm:"column:student_id"`
+	BaseDataModel
+	Name         string      `gorm:"column:name;type:varchar(45)"`
+	Avatar       string      `gorm:"column:avatar;type:longtext"`
+	Email        string      `gorm:"column:email;type:varchar(320);unique"`
+	Phone        string      `gorm:"column:phone;type:varchar(45);unique"`
+	Password     string      `gorm:"column:password;type:varchar(45)"`
+	Identity     string      `gorm:"column:identity;type:varchar(60)"`
+	ManageId     string      `gorm:"column:manage_id;type:varchar(20);unique"`
+	StudentId    string      `gorm:"column:student_id;type:varchar(20);unique"`
+	CourseCredit interface{} `gorm:"column:course_credit;type:json"`
 }
 
 // Application 申请表单
 type Application struct {
-	Form     interface{} `gorm:"column:form"`
-	History  interface{} `gorm:"column:history"`
-	CreateAt int64       `gorm:"column:create_at"`
-	EditAt   int64       `gorm:"column:edit_at"`
-	Score    interface{} `gorm:"column:score"`
-	Creator  string      `gorm:"column:creator"`
-	Status   int         `gorm:"column:status"`
-	Step     interface{} `gorm:"column:step"`
-	Year     int         `gorm:"column:year"`
+	BaseDataModel
+	Creator string      `gorm:"column:creator;type:varchar(20)"`
+	Status  string      `gorm:"column:status;type:varchar(30);default:save"`
+	Form    interface{} `gorm:"column:form;type:json"`
+	Step    string      `gorm:"column:step;type:varchar(320)"`
+	History interface{} `gorm:"column:history;type:json"`
 }
 
-// Process 流程
-type Process struct {
-	Info        interface{} `gorm:"column:form"`
-	CurrentStep interface{} `gorm:"column:current_step"`
-	CreateAt    int64       `gorm:"column:create_at"`
-	Creator     string      `gorm:"column:creator"`
+// Procedure 流程
+type Procedure struct {
+	BaseDataModel
+	CurrentStep interface{} `gorm:"column:current_step;type:json"`
+	Creator     string      `gorm:"column:creator;type:varchar(20);primaryKey"`
+	Steps       interface{} `gorm:"column:step;type:json"`
 }
