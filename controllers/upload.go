@@ -18,6 +18,14 @@ func UseUploadMVC(app *mvc.Application) {
 	app.Handle(new(UploadMVC))
 }
 
+func (u *UploadMVC) OptionsSingle() BaseControllerFmtData {
+	return BaseControllerFmtData{
+		Message: "success",
+		Code:    global.SuccessCode,
+		Data:    nil,
+	}
+}
+
 func (u *UploadMVC) PostSingle() BaseControllerFmtData {
 	u.Ctx.SetMaxRequestBodySize(maxSize)
 	_, fileHeader, err := u.Ctx.FormFile("file")
@@ -25,7 +33,7 @@ func (u *UploadMVC) PostSingle() BaseControllerFmtData {
 		u.Ctx.StopWithError(iris.StatusBadRequest, err)
 		return BaseControllerFmtData{
 			Message: "failed",
-			Code:    0,
+			Code:    global.ErrorCode,
 			Data:    nil,
 		}
 	}
@@ -33,7 +41,7 @@ func (u *UploadMVC) PostSingle() BaseControllerFmtData {
 	u.Ctx.SaveFormFile(fileHeader, dest)
 	return BaseControllerFmtData{
 		Message: "success",
-		Code:    0,
+		Code:    global.SuccessCode,
 		Data:    dest,
 	}
 }
@@ -52,7 +60,7 @@ func (u *UploadMVC) Post() BaseControllerFmtData {
 		u.Ctx.StopWithStatus(iris.StatusInternalServerError)
 		return BaseControllerFmtData{
 			Message: "failed",
-			Code:    0,
+			Code:    global.ErrorCode,
 			Data:    nil,
 		}
 	}
@@ -63,7 +71,7 @@ func (u *UploadMVC) Post() BaseControllerFmtData {
 	}
 	return BaseControllerFmtData{
 		Message: "Success",
-		Code:    1,
+		Code:    global.SuccessCode,
 		Data:    res,
 	}
 }
@@ -73,7 +81,7 @@ func (u *UploadMVC) PostStudentList() BaseControllerFmtData {
 	GetRequestParams(u.Ctx, &reqData)
 	return BaseControllerFmtData{
 		Message: "Success",
-		Code:    1,
+		Code:    global.SuccessCode,
 		Data:    reqData,
 	}
 }

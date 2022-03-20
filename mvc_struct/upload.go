@@ -11,3 +11,20 @@ type StudentItem struct {
 	Phone        string  `json:"phone"`
 	Email        string  `json:"email"`
 }
+
+type originFileObj struct {
+	Uid string `json:"uid"`
+}
+
+type UploadFileItem struct {
+	LastModified     int64         `json:"lastModified"`
+	LastModifiedDate string        `json:"lastModifiedDate"`
+	Name             string        `json:"name"`
+	OriginFileObj    originFileObj `json:"originFileObj"`
+	Percent          float32       `json:"percent"`
+	Size             int           `json:"size"`
+	Type             string        `json:"type"`
+	Uid              string        `json:"uid"`
+	Url              string        `json:"url"`
+	ThumbUrl         string        `json:"thumbUrl"`
+}

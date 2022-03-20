@@ -4,9 +4,6 @@ import (
 	"xupt-scholarship/db"
 )
 
-var users []db.User
-var user db.User
-
 type UserModel struct {
 }
 
@@ -17,6 +14,7 @@ type UserBaseInfo struct {
 }
 
 func (u *UserModel) GetUserList() BaseModelFmtData {
+	var users []db.User
 	result := db.Mysql.Find(&users)
 	var userList []UserBaseInfo
 	for _, user := range users {
@@ -40,6 +38,7 @@ type LoginUserInfo struct {
 }
 
 func (u *UserModel) GetUser(email string) BaseModelFmtData {
+	var user db.User
 	result := db.Mysql.Where(&db.User{Email: email}).First(&user)
 	var userInfo LoginUserInfo
 	userInfo = LoginUserInfo{

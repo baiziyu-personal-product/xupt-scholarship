@@ -39,8 +39,8 @@ func NewRedis() *RedisClient {
 func newPool(opt common.RedisConnOpt) *redis.Pool {
 	return &redis.Pool{
 		MaxIdle:     3,
-		IdleTimeout: 240 * time.Second,
-		// MaxActive:   10,
+		IdleTimeout: time.Duration(120),
+		MaxActive:   1000,
 		// Wait:        true,
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", opt.Host, opt.Port))
