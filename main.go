@@ -8,7 +8,6 @@ import (
 
 func main() {
 	initialize.Init()
-
 	color.Green("Serve config has been emitted!!!")
 	controllers.Router()
 }

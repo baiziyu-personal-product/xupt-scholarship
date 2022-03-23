@@ -1,6 +1,9 @@
 package controllers
 
-import "github.com/kataras/iris/v12/mvc"
+import (
+	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/mvc_struct"
+)
 
 type ProcessMVC struct {
 	BaseController
@@ -10,7 +13,7 @@ func UseProcessMVC(app *mvc.Application) {
 	app.Handle(new(ProcessMVC))
 }
 
-func (p *ProcessMVC) Get() BaseControllerFmtData {
+func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
 	return BaseControllerFmtData{
 		Code:    1,
 		Message: "成功拉取申请流程",
@@ -19,6 +22,8 @@ func (p *ProcessMVC) Get() BaseControllerFmtData {
 }
 
 func (p *ProcessMVC) Post() BaseControllerFmtData {
+	var processInfo mvc_struct.ProcessReqData
+	GetRequestParams(p.Ctx, &processInfo)
 	return BaseControllerFmtData{
 		Message: "处理成功",
 		Code:    1,
@@ -26,10 +31,12 @@ func (p *ProcessMVC) Post() BaseControllerFmtData {
 	}
 }
 
-func (p *ProcessMVC) GetSearch() BaseControllerFmtData {
+func (p *ProcessMVC) PutBy(processId int) BaseControllerFmtData {
+	var processInfo mvc_struct.ProcessReqData
+	GetRequestParams(p.Ctx, &processInfo)
 	return BaseControllerFmtData{
-		Message: "成功",
-		Code:    0,
+		Message: "处理成功",
+		Code:    1,
 		Data:    nil,
 	}
 }
