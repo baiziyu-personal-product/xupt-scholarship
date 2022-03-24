@@ -38,7 +38,9 @@ func Router() {
 			logrus.Error(err)
 		}
 	})
-
+	app.HandleDir("/avatars", global.Settings.AvatarPath)
+	app.HandleDir("/uploads", global.Settings.FilePath)
+	app.HandleDir("/images", global.Settings.ImagePath)
 	// MVC
 	mvc.Configure(app.Party("/sign"), UseSignMvc)
 	// 配置验证码 相关路由

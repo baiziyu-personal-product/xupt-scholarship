@@ -25,3 +25,10 @@ type ProcessReqData struct {
 	Form   ProcessStepData  `json:"form"`
 	Upload []UploadFileItem `json:"upload"`
 }
+
+type ProcessHistoryItem struct {
+	StartAt  int64  `json:"start_at"`
+	EndAt    int64  `json:"end_at"`
+	Duration int64  `json:"duration"`
+	Step     string `json:"step"`
+}

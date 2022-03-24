@@ -16,19 +16,15 @@ func (s *SignModel) Login(data mvc_struct.SignOfLogin) BaseModelFmtData {
 		Password: data.Password,
 	}).First(&user)
 
-	return HandleDBData(result, user.StudentId+user.ManageId)
+	return HandleDBData(result, user.UserId)
 }
 
 // Register postRegister
 func (s *SignModel) Register(data mvc_struct.SignOfRegister) BaseModelFmtData {
 	user := db.User{
-		Email:     data.Email,
-		Phone:     data.Phone,
-		Password:  data.Password,
-		Avatar:    data.Avatar,
-		Identity:  "",
-		ManageId:  data.ManageId,
-		StudentId: data.StudentId,
+		Email:    data.Email,
+		Password: data.Password,
+		Identity: data.Identity,
 	}
 	result := db.Mysql.Create(&user)
 	return HandleDBData(result, nil)

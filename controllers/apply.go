@@ -24,14 +24,14 @@ type ApplyData struct {
 func (a *ApplyMVC) GetBy(applyId int) BaseControllerFmtData {
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	applyData := applyModel.GetApplyData(applyId, user.StudentId)
+	applyData := applyModel.GetApplyData(applyId, user.UserId)
 	return HandleControllerRes(applyData, "获取申请表单")
 }
 
 func (a *ApplyMVC) GetFormList() BaseControllerFmtData {
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	applyData := applyModel.GetApplyList(user.StudentId)
+	applyData := applyModel.GetApplyList(user.UserId)
 	return HandleControllerRes(applyData, "获取表单列表")
 }
 
@@ -55,7 +55,7 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
 		Form:      reqData,
-		StudentId: user.StudentId,
+		StudentId: user.UserId,
 		Type:      handleType,
 	})
 	return HandleControllerRes(formModel, "申请信息创建")
@@ -69,7 +69,7 @@ func (a *ApplyMVC) PutBy(applyId int, applyType string) BaseControllerFmtData {
 	formModel := applyModel.UpdateApplyForm(mvc_struct.UpdateApplyBaseInfo{
 		Form:      reqData,
 		Id:        applyId,
-		StudentId: user.StudentId,
+		StudentId: user.UserId,
 		Type:      applyType,
 	})
 	return HandleControllerRes(formModel, "申请信息处理")

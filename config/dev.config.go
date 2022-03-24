@@ -16,7 +16,9 @@ func GetDevGlobalConfig() GlobalConfig {
 			Host: "127.0.0.1",
 			Port: 6379,
 		},
-		LogsAddr:  "./logs",
-		ImagePath: "./uploads/",
+		LogsAddr:   "./logs",
+		ImagePath:  "./images/",
+		FilePath:   "./uploads/",
+		AvatarPath: "./avatars/",
 	}
 }

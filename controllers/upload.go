@@ -26,7 +26,7 @@ func (u *UploadMVC) OptionsSingle() BaseControllerFmtData {
 	}
 }
 
-func (u *UploadMVC) PostSingle() BaseControllerFmtData {
+func (u *UploadMVC) PostSingleBy(upType string) BaseControllerFmtData {
 	u.Ctx.SetMaxRequestBodySize(maxSize)
 	_, fileHeader, err := u.Ctx.FormFile("file")
 	if err != nil {
@@ -37,12 +37,18 @@ func (u *UploadMVC) PostSingle() BaseControllerFmtData {
 			Data:    nil,
 		}
 	}
-	dest, _ := filepath.Abs(filepath.Join(global.Settings.ImagePath, fileHeader.Filename))
+	var filePath = global.Settings.FilePath
+	if upType == "avatar" {
+		filePath = global.Settings.AvatarPath
+	} else if upType == "image" {
+		filePath = global.Settings.ImagePath
+	}
+	dest, _ := filepath.Abs(filepath.Join(filePath, fileHeader.Filename))
 	u.Ctx.SaveFormFile(fileHeader, dest)
 	return BaseControllerFmtData{
 		Message: "success",
 		Code:    global.SuccessCode,
-		Data:    dest,
+		Data:    filePath + fileHeader.Filename,
 	}
 }
 
@@ -66,8 +72,8 @@ func (u *UploadMVC) Post() BaseControllerFmtData {
 	}
 	var res []string
 	for _, file := range files {
-		filePath, _ := filepath.Abs(filepath.Join(global.Settings.ImagePath, file.Filename))
-		res = append(res, filePath)
+		filepath.Abs(filepath.Join(global.Settings.FilePath, file.Filename))
+		res = append(res, global.Settings.FilePath+file.Filename)
 	}
 	return BaseControllerFmtData{
 		Message: "Success",
