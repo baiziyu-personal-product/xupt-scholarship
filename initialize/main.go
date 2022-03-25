@@ -11,4 +11,5 @@ func Init() {
 	global.Settings = config.GetDevGlobalConfig()
 	db.Mysql = db.NewMysql()
 	db.Redis = db.NewRedis()
+	db.InitSessionDB()
 }

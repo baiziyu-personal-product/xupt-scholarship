@@ -11,6 +11,7 @@ import (
 // GetRequestParams 获取请求参数
 func GetRequestParams(ctx iris.Context, data interface{}) {
 	var params interface{}
+	ctx.ReadQuery(&params)
 	if ctxErr := ctx.ReadJSON(&params); ctxErr != nil {
 		panic(ctxErr)
 	}

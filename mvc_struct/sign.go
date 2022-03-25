@@ -12,15 +12,11 @@ type SignOfLogin struct {
 
 type SignOfRegister struct {
 	BaseSignForm
-	Phone     string `json:"phone"`
-	StudentId string `json:"student_id"`
-	ManageId  string `json:"manage_id"`
-	Avatar    string `json:"avatar"`
+	Identity string `json:"identity"`
 }
 
 type SignOfForget struct {
-	Phone     string `json:"phone"`
-	StudentId string `json:"student_id"`
-	ManagerId string `json:"manager_id"`
-	Email     string `json:"email"`
+	Phone  string `json:"phone"`
+	UserId string `json:"user_id"`
+	Email  string `json:"email"`
 }

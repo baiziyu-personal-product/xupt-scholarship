@@ -19,7 +19,7 @@ type CaptchaStore struct {
 
 func (CS *CaptchaStore) Set(id string, digits []byte) {
 	redis := db.Redis
-	redis.SET(id, string(digits))
+	redis.SETEX(id, int(time.Minute*5), string(digits))
 }
 
 func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {

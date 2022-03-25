@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/kataras/iris/v12/mvc"
 	"xupt-scholarship/model"
+	"xupt-scholarship/mvc_struct"
 )
 
 type User struct {
@@ -25,4 +26,12 @@ func (u *User) Get() BaseControllerFmtData {
 func (u *User) GetList() BaseControllerFmtData {
 	res := UserModel.GetUserList()
 	return HandleControllerRes(res, "获取用户列表")
+}
+
+func (u *User) PostUpdateUserInfo() BaseControllerFmtData {
+	var info mvc_struct.UpdateUserInfo
+	email := u.Session.GetString(sessionId)
+	GetRequestParams(u.Ctx, &info)
+	res := UserModel.UpdateUser(email, info)
+	return HandleControllerRes(res, "更新用户信息")
 }

@@ -7,6 +7,8 @@ type GlobalConfig struct {
 	RedisConfig RedisConfig
 	LogsAddr    string
 	ImagePath   string
+	AvatarPath  string
+	FilePath    string
 }
 
 type MysqlConfig struct {

@@ -1,17 +1,138 @@
 package mvc_struct
 
-type BaseApply struct {
-	Form      interface{} `json:"form"`
-	EditAt    int64       `json:"edit_at"`
-	StudentId string      `json:"student_id"`
-	Type      string      `json:"type"`
+type moralFormItem struct {
+	Level string           `json:"level"`
+	Name  string           `json:"name"`
+	Info  string           `json:"info"`
+	Time  string           `json:"time"`
+	Files []UploadFileItem `json:"files"`
+	Score float32          `json:"score" default:"0"`
 }
 
-type ApplyOfCreate struct {
-	BaseApply
-	CreateAt int64 `json:"create_at"`
+type moralFormValue struct {
+	List  []moralFormItem `json:"list"`
+	Score float32         `json:"score" default:"0"`
 }
 
-type ApplyOfEdit struct {
-	BaseApply
+type practiceFormResultItem struct {
+	Level    string           `json:"level"`
+	Time     string           `json:"time"`
+	Name     string           `json:"name"`
+	Order    int              `json:"order"`
+	Partners int              `json:"partners"`
+	Files    []UploadFileItem `json:"files"`
+	Score    float32          `json:"score" default:"0"`
+}
+
+type socialCadreItem struct {
+	Level      []string `json:"level"`
+	Department string   `json:"department"`
+	Score      float32  `json:"score" default:"0"`
+}
+
+type socialActivityItem struct {
+	Level string           `json:"level"`
+	Name  string           `json:"name"`
+	Time  []string         `json:"time"`
+	Files []UploadFileItem `json:"files"`
+	Score float32          `json:"score" default:"0"`
+}
+
+type practiceSocialFormValue struct {
+	Cadre    []socialCadreItem    `json:"cadre"`
+	Activity []socialActivityItem `json:"activity"`
+	Score    float32              `json:"score" default:"0"`
+}
+
+type practiceCompetitionFormValue struct {
+	Level []string         `json:"level"`
+	Name  string           `json:"name"`
+	Time  string           `json:"time"`
+	Files []UploadFileItem `json:"files"`
+	Score float32          `json:"score" default:"0"`
+}
+
+type practiceFormValue struct {
+	Result      []practiceFormResultItem       `json:"result"`
+	Social      practiceSocialFormValue        `json:"social"`
+	Competition []practiceCompetitionFormValue `json:"competition"`
+	Score       float32                        `json:"score" default:"0"`
+}
+
+type academicAwardFormItem struct {
+	Level []string         `json:"level"`
+	Name  string           `json:"name"`
+	Time  string           `json:"time"`
+	Files []UploadFileItem `json:"files"`
+	Score float32          `json:"score" default:"0"`
+}
+
+type academicScientificFormItem struct {
+	Level                 string           `json:"level"`
+	Name                  string           `json:"name"`
+	Time                  []string         `json:"time"`
+	FundsActuallyReceived int              `json:"funds_actually_received"`
+	FundsDue              int              `json:"funds_due"`
+	Distribute            int              `json:"distribute"`
+	Files                 []UploadFileItem `json:"files"`
+	Score                 float32          `json:"score" default:"0"`
+}
+
+type academicDissertationFormItem struct {
+	Level    string           `json:"level"`
+	Name     string           `json:"name"`
+	IdNumber string           `json:"id_number"`
+	Time     string           `json:"time"`
+	Files    []UploadFileItem `json:"files"`
+	Score    float32          `json:"score" default:"0"`
+}
+
+type academicPublishFormItem struct {
+	Level            string           `json:"level"`
+	Name             string           `json:"name"`
+	Time             string           `json:"time"`
+	PublishHouseName string           `json:"publish_house_name"`
+	FontsCount       int              `json:"fonts_count"`
+	Files            []UploadFileItem `json:"files"`
+	Score            float32          `json:"score" default:"0"`
+}
+
+type academicFormValue struct {
+	Award        []academicAwardFormItem        `json:"award"`
+	Scientific   []academicScientificFormItem   `json:"scientific"`
+	Dissertation []academicDissertationFormItem `json:"dissertation"`
+	Publish      []academicPublishFormItem      `json:"publish"`
+	Score        float32                        `json:"score" default:"0"`
+}
+
+type ApplicationValue struct {
+	Moral    moralFormValue    `json:"moral"`
+	Practice practiceFormValue `json:"practice"`
+	Academic academicFormValue `json:"academic"`
+	Score    float32           `json:"score" default:"0"`
+}
+
+type CreateApplyByBaseInfo struct {
+	Form      ApplicationValue `json:"form"`
+	StudentId string           `json:"student_id"`
+	Type      string           `json:"type"`
+}
+
+type SearchApplyByBaseInfo struct {
+	Id        int    `json:"id"`
+	StudentId string `json:"student_id"`
+}
+
+type UpdateApplyBaseInfo struct {
+	Id        int              `json:"id"`
+	Form      ApplicationValue `json:"form"`
+	StudentId string           `json:"student_id"`
+	Type      string           `json:"type"`
+}
+
+type ApplyListParams struct {
+	PageCount int    `json:"page_count" default:"10"`
+	PageIndex int    `json:"page_index" default:"1"`
+	IsCheck   bool   `json:"is_check" default:"false"`
+	LastDate  string `json:"last_date" default:""`
 }

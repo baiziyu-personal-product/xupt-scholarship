@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `xupt-scholarship` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `xupt-scholarship`;
 -- MySQL dump 10.13  Distrib 8.0.27, for Win64 (x86_64)
 --
 -- Host: localhost    Database: xupt-scholarship
@@ -16,121 +18,61 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `application`
+-- Table structure for table `applications`
 --
 
-DROP TABLE IF EXISTS `application`;
+DROP TABLE IF EXISTS `applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `application` (
+CREATE TABLE `applications` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `form` json NOT NULL,
   `create_at` bigint NOT NULL,
+  `update_at` bigint NOT NULL,
   `creator` varchar(20) COLLATE utf8_bin NOT NULL,
-  `score` json NOT NULL,
-  `edit_at` bigint NOT NULL,
-  `status` int NOT NULL DEFAULT '0' COMMENT '-1 已结束\n0 未开始\n1 进行中',
+  `status` varchar(30) COLLATE utf8_bin NOT NULL DEFAULT '"save"' COMMENT 'save\\nsubmit\\nfinish\\ndroped\\nerror',
+  `form` json NOT NULL,
   `step` varchar(320) COLLATE utf8_bin NOT NULL COMMENT '当前进行步骤',
   `history` json NOT NULL,
-  `year` int NOT NULL,
   PRIMARY KEY (`id`,`creator`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `application`
+-- Dumping data for table `applications`
 --
 
-LOCK TABLES `application` WRITE;
-/*!40000 ALTER TABLE `application` DISABLE KEYS */;
-/*!40000 ALTER TABLE `application` ENABLE KEYS */;
+LOCK TABLES `applications` WRITE;
+/*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `manager`
+-- Table structure for table `procedures`
 --
 
-DROP TABLE IF EXISTS `manager`;
+DROP TABLE IF EXISTS `procedures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `manager` (
-  `id` varchar(20) COLLATE utf8_bin NOT NULL,
-  `permission_level` int NOT NULL DEFAULT '0' COMMENT '0 查看\n1 编辑',
-  `name` varchar(160) COLLATE utf8_bin NOT NULL,
-  `department` varchar(160) COLLATE utf8_bin NOT NULL,
-  `position` varchar(320) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='管理员';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `manager`
---
-
-LOCK TABLES `manager` WRITE;
-/*!40000 ALTER TABLE `manager` DISABLE KEYS */;
-/*!40000 ALTER TABLE `manager` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `process`
---
-
-DROP TABLE IF EXISTS `process`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `process` (
+CREATE TABLE `procedures` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `info` json DEFAULT NULL,
+  `steps` json DEFAULT NULL,
   `current_step` json DEFAULT NULL,
   `creator` varchar(20) COLLATE utf8_bin NOT NULL,
   `create_at` bigint NOT NULL,
+  `update_at` bigint NOT NULL,
   PRIMARY KEY (`id`,`creator`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `process`
+-- Dumping data for table `procedures`
 --
 
-LOCK TABLES `process` WRITE;
-/*!40000 ALTER TABLE `process` DISABLE KEYS */;
-/*!40000 ALTER TABLE `process` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `student`
---
-
-DROP TABLE IF EXISTS `student`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `student` (
-  `id` varchar(20) COLLATE utf8_bin NOT NULL,
-  `name` varchar(160) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `profession` varchar(160) COLLATE utf8_bin NOT NULL COMMENT '专业',
-  `class` int NOT NULL DEFAULT '0',
-  `identity_number` varchar(25) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `gender` varchar(5) COLLATE utf8_bin NOT NULL DEFAULT 'man',
-  `permission` int NOT NULL DEFAULT '0' COMMENT '0 无权限\n1 有权限\n',
-  `edit_at` datetime(6) NOT NULL,
-  `create_at` datetime(6) NOT NULL,
-  PRIMARY KEY (`id`,`identity_number`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `identity_number_UNIQUE` (`identity_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='学生表';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `student`
---
-
-LOCK TABLES `student` WRITE;
-/*!40000 ALTER TABLE `student` DISABLE KEYS */;
-/*!40000 ALTER TABLE `student` ENABLE KEYS */;
+LOCK TABLES `procedures` WRITE;
+/*!40000 ALTER TABLE `procedures` DISABLE KEYS */;
+/*!40000 ALTER TABLE `procedures` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -142,13 +84,16 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8_bin NOT NULL,
   `email` varchar(320) COLLATE utf8_bin NOT NULL,
   `phone` varchar(45) COLLATE utf8_bin NOT NULL,
   `password` varchar(45) COLLATE utf8_bin NOT NULL,
-  `identity` set('student','manager') COLLATE utf8_bin NOT NULL DEFAULT 'student' COMMENT '身份信息',
+  `identity` varchar(60) COLLATE utf8_bin NOT NULL DEFAULT '"学生"' COMMENT '身份信息',
   `manage_id` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '',
   `student_id` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `update_at` bigint NOT NULL,
   `avatar` longtext COLLATE utf8_bin,
+  `course_credit` json DEFAULT NULL,
   `create_at` bigint NOT NULL,
   PRIMARY KEY (`id`,`email`,`phone`,`manage_id`,`student_id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
@@ -162,7 +107,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'','','','','','','',1645861017),(2,'baiziyu-fe@outlook.com','18740312553','586014BZYbzy','','','04183180','',1645861276);
+INSERT INTO `users` VALUES (2,'白子煜','baiziyu-fe@outlook.com','18740312553','586014BZYbzy','','','04183180',0,'https://developer.harmonyos.com/resource/image/release2/home/HarmonyOS_Developer_logo.png',NULL,1645861276),(3,'白子煜','1737586014@qq.com','13299130443','Admin12345','','','04183199',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(4,'王著名','1923790788@qq.com','1923790788','Admin12345','','','04183187',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(5,'王勇','1258001867@qq.com','869270569','Admin12345','','','04183175',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(6,'王洋','614931274@qq.com','614931274','Admin12345','','','04183177',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(7,'王勇','869270569@qq.com','314561235','Admin12345','','','04183198',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(8,'杨航','1258001276@qq.com','1923790788','Admin12345','','','04183181',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(9,'赵世宇','1399015539@qq.com','192379078834','Admin12345','','','04183178',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -175,4 +120,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-09 15:29:19
+-- Dump completed on 2022-03-19 18:54:54

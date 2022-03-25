@@ -1,16 +1,21 @@
 package controllers
 
-import "github.com/kataras/iris/v12/mvc"
+import (
+	"fmt"
+	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/model"
+	"xupt-scholarship/mvc_struct"
+)
 
 type ProcessMVC struct {
 	BaseController
 }
 
 func UseProcessMVC(app *mvc.Application) {
-	app.Handle(new(ProcessMVC))
+	app.Register(userSession.Start).Handle(new(ProcessMVC))
 }
 
-func (p *ProcessMVC) Get() BaseControllerFmtData {
+func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
 	return BaseControllerFmtData{
 		Code:    1,
 		Message: "成功拉取申请流程",
@@ -19,6 +24,12 @@ func (p *ProcessMVC) Get() BaseControllerFmtData {
 }
 
 func (p *ProcessMVC) Post() BaseControllerFmtData {
+	var processInfo mvc_struct.ProcessFormData
+	GetRequestParams(p.Ctx, &processInfo)
+	email := p.Session.GetString(sessionId)
+	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	fmt.Println(user)
+	fmt.Println("email" + email)
 	return BaseControllerFmtData{
 		Message: "处理成功",
 		Code:    1,
@@ -26,10 +37,12 @@ func (p *ProcessMVC) Post() BaseControllerFmtData {
 	}
 }
 
-func (p *ProcessMVC) GetSearch() BaseControllerFmtData {
+func (p *ProcessMVC) PutBy(processId int) BaseControllerFmtData {
+	var processInfo mvc_struct.ProcessFormData
+	GetRequestParams(p.Ctx, &processInfo)
 	return BaseControllerFmtData{
-		Message: "成功",
-		Code:    0,
+		Message: "处理成功",
+		Code:    1,
 		Data:    nil,
 	}
 }
