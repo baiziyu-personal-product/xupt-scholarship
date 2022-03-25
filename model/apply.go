@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"gorm.io/gorm"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
 	"xupt-scholarship/utils"
@@ -25,15 +26,13 @@ func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) Base
 
 func (a *ApplyModel) UpdateApplyForm(data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData {
 	jsonForm, _ := json.Marshal(data.Form)
-	apply := db.Application{
-		BaseDataModel: db.BaseDataModel{ID: data.Id},
-	}
+	var apply db.Application
 	var updateMap = map[string]interface{}{
 		"status": data.Type,
 		"info":   string(jsonForm),
 		"score":  0,
 	}
-	result := db.Mysql.Model(&apply).Updates(updateMap)
+	result := db.Mysql.Model(&apply).Where("id = ?", data.Id).Updates(updateMap)
 	return HandleDBData(result, apply.ID)
 }
 
@@ -65,16 +64,37 @@ func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtDat
 		Form: applicationData,
 	})
 }
-func (a *ApplyModel) GetApplyList(studentId string) BaseModelFmtData {
+
+func (a *ApplyModel) GetApplyList(
+	userId string,
+	pageCount int,
+	pageIndex int,
+	isCheck string,
+	lastDate string,
+) BaseModelFmtData {
 	var applyList []ApplyFormBaseData
-	Application := db.Application{
-		UserId: studentId,
-	}
+	var application db.Application
 	var ApplicationList []db.Application
-	result := db.Mysql.Where(&Application).Find(&ApplicationList)
+	var startDate string
+	if lastDate == "" {
+		startDate = lastDate
+	} else {
+		// 获取最近一次发布奖学金申请流程
+		// 并且获取其中运行学生申请奖学金的时间
+		startDate = GetProcessFormData(-1).Data.(ProcedureModelFormData).Form.Form.IndividualApplicationStage.Date[0]
+	}
+	yearTime := GetCurrentYear(startDate)
+	// 分页
+	offset, limit := GetPageLimit(pageCount, pageIndex)
+	var result *gorm.DB
+	if isCheck == "manager" {
+		result = db.Mysql.Limit(limit).Offset(offset).Where("create_at > ?", yearTime).Find(&ApplicationList)
+	} else {
+		result = db.Mysql.Limit(limit).Offset(offset).Where("user_id = ? AND create_at > ?", userId, yearTime).Find(&ApplicationList)
+	}
 	for _, apply := range ApplicationList {
 		var applicationData mvc_struct.ApplicationValue
-		json.Unmarshal(Application.Info, &applicationData)
+		json.Unmarshal(application.Info, &applicationData)
 		applyList = append(applyList, ApplyFormBaseData{
 			Id:       apply.ID,
 			CreateAt: utils.FmtTimeByUnix(apply.CreateAt),

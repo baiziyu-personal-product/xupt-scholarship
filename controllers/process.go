@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/model"
 	"xupt-scholarship/mvc_struct"
 )
 
@@ -10,7 +12,7 @@ type ProcessMVC struct {
 }
 
 func UseProcessMVC(app *mvc.Application) {
-	app.Handle(new(ProcessMVC))
+	app.Register(userSession.Start).Handle(new(ProcessMVC))
 }
 
 func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
@@ -22,8 +24,12 @@ func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
 }
 
 func (p *ProcessMVC) Post() BaseControllerFmtData {
-	var processInfo mvc_struct.ProcessReqData
+	var processInfo mvc_struct.ProcessFormData
 	GetRequestParams(p.Ctx, &processInfo)
+	email := p.Session.GetString(sessionId)
+	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	fmt.Println(user)
+	fmt.Println("email" + email)
 	return BaseControllerFmtData{
 		Message: "处理成功",
 		Code:    1,
@@ -32,7 +38,7 @@ func (p *ProcessMVC) Post() BaseControllerFmtData {
 }
 
 func (p *ProcessMVC) PutBy(processId int) BaseControllerFmtData {
-	var processInfo mvc_struct.ProcessReqData
+	var processInfo mvc_struct.ProcessFormData
 	GetRequestParams(p.Ctx, &processInfo)
 	return BaseControllerFmtData{
 		Message: "处理成功",

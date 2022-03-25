@@ -29,9 +29,19 @@ func (a *ApplyMVC) GetBy(applyId int) BaseControllerFmtData {
 }
 
 func (a *ApplyMVC) GetFormList() BaseControllerFmtData {
+	pageCount := a.Ctx.URLParamIntDefault("page_count", 10)
+	pageIndex := a.Ctx.URLParamIntDefault("page_index", 1)
+	isCheck := a.Ctx.URLParamDefault("is_check", "manager")
+	lastDate := a.Ctx.URLParamDefault("last_date", "")
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	applyData := applyModel.GetApplyList(user.UserId)
+	applyData := applyModel.GetApplyList(
+		user.UserId,
+		pageCount,
+		pageIndex,
+		isCheck,
+		lastDate,
+	)
 	return HandleControllerRes(applyData, "获取表单列表")
 }
 

@@ -39,7 +39,7 @@ type LoginUserInfo struct {
 
 func (u *UserModel) GetUser(email string) BaseModelFmtData {
 	var user db.User
-	result := db.Mysql.Where(&db.User{Email: email}).First(&user)
+	result := db.Mysql.Where("email = ?", email).First(&user)
 	var userInfo LoginUserInfo
 	userInfo = LoginUserInfo{
 		UserBaseInfo: UserBaseInfo{

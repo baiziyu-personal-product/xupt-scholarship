@@ -129,3 +129,10 @@ type UpdateApplyBaseInfo struct {
 	StudentId string           `json:"student_id"`
 	Type      string           `json:"type"`
 }
+
+type ApplyListParams struct {
+	PageCount int    `json:"page_count" default:"10"`
+	PageIndex int    `json:"page_index" default:"1"`
+	IsCheck   bool   `json:"is_check" default:"false"`
+	LastDate  string `json:"last_date" default:""`
+}

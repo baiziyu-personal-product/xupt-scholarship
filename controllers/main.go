@@ -26,7 +26,6 @@ func Router() {
 	app.Logger().SetLevel("warn")
 	middleware.UseMiddleWare(app)
 	app.AllowMethods(iris.MethodOptions)
-
 	app.OnAnyErrorCode(func(ctx *context.Context) {
 		path := ctx.Path()
 		var err error

@@ -3,7 +3,7 @@ package mvc_struct
 type ProcessStepValue struct {
 	Date     []string `json:"date"`
 	Desc     string   `json:"desc"`
-	Mentions string   `json:"mentions"`
+	Mentions []string `json:"mentions"`
 }
 
 type ProcessStepData struct {
@@ -21,9 +21,13 @@ type ProcessStepData struct {
 	Finish                                                     ProcessStepValue `json:"finish"`
 }
 
-type ProcessReqData struct {
+type uploadFilesField struct {
+	files []UploadFileItem `json:"files"`
+}
+
+type ProcessFormData struct {
 	Form   ProcessStepData  `json:"form"`
-	Upload []UploadFileItem `json:"upload"`
+	Upload uploadFilesField `json:"upload"`
 }
 
 type ProcessHistoryItem struct {
