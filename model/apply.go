@@ -8,6 +8,8 @@ import (
 	"xupt-scholarship/utils"
 )
 
+var processModel ProcessModel
+
 type ApplyModel struct {
 }
 
@@ -81,7 +83,7 @@ func (a *ApplyModel) GetApplyList(
 	} else {
 		// 获取最近一次发布奖学金申请流程
 		// 并且获取其中运行学生申请奖学金的时间
-		startDate = GetProcessFormData(-1).Data.(ProcedureModelFormData).Form.Form.IndividualApplicationStage.Date[0]
+		startDate = processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Form.Form.IndividualApplicationStage.Date[0]
 	}
 	yearTime := GetCurrentYear(startDate)
 	// 分页

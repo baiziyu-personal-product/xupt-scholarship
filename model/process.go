@@ -8,15 +8,18 @@ import (
 	"xupt-scholarship/utils"
 )
 
-func CreateProcess(data mvc_struct.ProcessFormData) BaseModelFmtData {
+type ProcessModel struct {
+}
+
+func (p *ProcessModel) CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData {
 	info, _ := json.Marshal(data)
 	process := db.Procedure{
-		CurrentStep: []byte(""),
-		UserId:      "",
+		CurrentStep: []byte("{}"),
+		UserId:      userId,
 		Info:        info,
-		History:     nil,
+		History:     []byte("{}"),
 	}
-	result := db.Mysql.Create(process)
+	result := db.Mysql.Create(&process)
 	return HandleDBData(result, process.ID)
 }
 
@@ -28,7 +31,7 @@ type ProcedureModelFormData struct {
 	EditAt   string                     `json:"edit_at"`
 }
 
-func GetProcessFormData(id int) BaseModelFmtData {
+func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
 	var processData mvc_struct.ProcessFormData
 	var processInfo db.Procedure
 	var result *gorm.DB
@@ -47,7 +50,7 @@ func GetProcessFormData(id int) BaseModelFmtData {
 	})
 }
 
-func UpdateProcessFormData(id int, info mvc_struct.ProcessFormData) BaseModelFmtData {
+func (p *ProcessModel) UpdateProcessFormData(id int, info mvc_struct.ProcessFormData) BaseModelFmtData {
 	jsonInfo, _ := json.Marshal(info)
 	var procedure db.Procedure
 	result := db.Mysql.Model(procedure).Where("id = ?", id).Update("info", jsonInfo)
@@ -59,7 +62,7 @@ type stepData struct {
 	Current mvc_struct.ProcessHistoryItem   `json:"current"`
 }
 
-func GetProcessStep(id int) BaseModelFmtData {
+func (p *ProcessModel) GetProcessStep(id int) BaseModelFmtData {
 	var procedure db.Procedure
 	var stepHistory []mvc_struct.ProcessHistoryItem
 	var currentStep mvc_struct.ProcessHistoryItem
