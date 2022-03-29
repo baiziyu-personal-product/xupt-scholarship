@@ -18,6 +18,38 @@ USE `xupt-scholarship`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `actions`
+--
+
+DROP TABLE IF EXISTS `actions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `actions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `create_at` bigint NOT NULL,
+  `update_at` bigint NOT NULL,
+  `user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `apply_id` int NOT NULL,
+  `info` json NOT NULL,
+  PRIMARY KEY (`id`,`user_id`,`apply_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_action_apply_id` (`apply_id`),
+  KEY `fk_action_user_id` (`user_id`),
+  CONSTRAINT `fk_action_apply_id` FOREIGN KEY (`apply_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_action_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `actions`
+--
+
+LOCK TABLES `actions` WRITE;
+/*!40000 ALTER TABLE `actions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `actions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `applications`
 --
 
@@ -28,14 +60,20 @@ CREATE TABLE `applications` (
   `id` int NOT NULL AUTO_INCREMENT,
   `create_at` bigint NOT NULL,
   `update_at` bigint NOT NULL,
-  `creator` varchar(20) COLLATE utf8_bin NOT NULL,
-  `status` varchar(30) COLLATE utf8_bin NOT NULL DEFAULT '"save"' COMMENT 'save\\nsubmit\\nfinish\\ndroped\\nerror',
-  `form` json NOT NULL,
-  `step` varchar(320) COLLATE utf8_bin NOT NULL COMMENT '当前进行步骤',
+  `status` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '"save"' COMMENT 'save\\nsubmit\\nfinish\\ndroped\\nerror',
+  `info` json NOT NULL,
+  `step` varchar(320) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '当前进行步骤',
   `history` json NOT NULL,
-  PRIMARY KEY (`id`,`creator`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
+  `score` float NOT NULL DEFAULT '0',
+  `user_id` varchar(20) COLLATE utf8_bin NOT NULL,
+  `procedure_id` int NOT NULL,
+  PRIMARY KEY (`id`,`user_id`,`procedure_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `stu_id_PRIMARY` (`user_id`),
+  KEY `fk_app_procedure_id` (`procedure_id`),
+  CONSTRAINT `fk_app_procedure_id` FOREIGN KEY (`procedure_id`) REFERENCES `procedures` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_app_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,6 +86,36 @@ LOCK TABLES `applications` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `logs`
+--
+
+DROP TABLE IF EXISTS `logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `logs` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `create_at` bigint NOT NULL,
+  `update_at` bigint NOT NULL,
+  `data` longtext CHARACTER SET utf8 COLLATE utf8_bin,
+  `info` json DEFAULT NULL,
+  `user_id` varchar(20) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`,`user_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_log_user_id` (`user_id`),
+  CONSTRAINT `fk_log_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `logs`
+--
+
+LOCK TABLES `logs` WRITE;
+/*!40000 ALTER TABLE `logs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `logs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `procedures`
 --
 
@@ -56,14 +124,17 @@ DROP TABLE IF EXISTS `procedures`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `procedures` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `steps` json DEFAULT NULL,
+  `info` json DEFAULT NULL,
   `current_step` json DEFAULT NULL,
-  `creator` varchar(20) COLLATE utf8_bin NOT NULL,
+  `user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `create_at` bigint NOT NULL,
   `update_at` bigint NOT NULL,
-  PRIMARY KEY (`id`,`creator`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+  `history` json DEFAULT NULL,
+  PRIMARY KEY (`id`,`user_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_procedure_user_id` (`user_id`),
+  CONSTRAINT `fk_procedure_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,21 +155,22 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) COLLATE utf8_bin NOT NULL,
-  `email` varchar(320) COLLATE utf8_bin NOT NULL,
-  `phone` varchar(45) COLLATE utf8_bin NOT NULL,
-  `password` varchar(45) COLLATE utf8_bin NOT NULL,
-  `identity` varchar(60) COLLATE utf8_bin NOT NULL DEFAULT '"学生"' COMMENT '身份信息',
-  `manage_id` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `student_id` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `name` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `email` varchar(320) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `phone` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `password` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `identity` set('student','manager') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'student' COMMENT '身份信息',
   `update_at` bigint NOT NULL,
-  `avatar` longtext COLLATE utf8_bin,
-  `course_credit` json DEFAULT NULL,
+  `avatar` longtext CHARACTER SET utf8 COLLATE utf8_bin,
+  `info` json DEFAULT NULL,
   `create_at` bigint NOT NULL,
-  PRIMARY KEY (`id`,`email`,`phone`,`manage_id`,`student_id`),
+  `user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`,`email`,`phone`,`user_id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='用户表';
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `user_id_UNIQUE` (`user_id`),
+  KEY `user_id_INDEX` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +179,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (2,'白子煜','baiziyu-fe@outlook.com','18740312553','586014BZYbzy','','','04183180',0,'https://developer.harmonyos.com/resource/image/release2/home/HarmonyOS_Developer_logo.png',NULL,1645861276),(3,'白子煜','1737586014@qq.com','13299130443','Admin12345','','','04183199',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(4,'王著名','1923790788@qq.com','1923790788','Admin12345','','','04183187',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(5,'王勇','1258001867@qq.com','869270569','Admin12345','','','04183175',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(6,'王洋','614931274@qq.com','614931274','Admin12345','','','04183177',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(7,'王勇','869270569@qq.com','314561235','Admin12345','','','04183198',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(8,'杨航','1258001276@qq.com','1923790788','Admin12345','','','04183181',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899),(9,'赵世宇','1399015539@qq.com','192379078834','Admin12345','','','04183178',0,'https://consumer-img.huawei.com/content/dam/huawei-cbg-site/greate-china/cn/mkt/emui-11/emui-11-new/img/pc/huawei-emui-11-logo.svg',NULL,1645861899);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -120,4 +191,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-19 18:54:54
+-- Dump completed on 2022-03-29 18:16:41
