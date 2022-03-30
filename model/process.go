@@ -14,10 +14,10 @@ type ProcessModel struct {
 func (p *ProcessModel) CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData {
 	info, _ := json.Marshal(data)
 	process := db.Procedure{
-		CurrentStep: []byte("{}"),
+		CurrentStep: []byte("[]"),
 		UserId:      userId,
 		Info:        info,
-		History:     []byte("{}"),
+		History:     []byte("[]"),
 	}
 	result := db.Mysql.Create(&process)
 	return HandleDBData(result, process.ID)
@@ -50,10 +50,51 @@ func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
 	})
 }
 
+type CurrentYearProcessData struct {
+	History []mvc_struct.ProcessHistoryItem `json:"history"`
+	UserId  string                          `json:"user_id"`
+	Id      int                             `json:"id"`
+}
+
+type ProcessStatusRes struct {
+	Status     string `json:"status"`
+	ProcessId  int    `json:"process_id"`
+	Editable   bool   `json:"editable"`
+	Createable bool   `json:"createable"`
+}
+
+func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) BaseModelFmtData {
+	var procedure db.Procedure
+	var stepHistory []mvc_struct.ProcessHistoryItem
+	var processInfo mvc_struct.ProcessFormData
+	yearTime := GetCurrentYear("")
+	result := db.Mysql.Where("create_at > ?", yearTime).First(&procedure)
+	status := "not_create"
+	isLate := false
+	if result.Error == nil {
+		json.Unmarshal(procedure.History, &stepHistory)
+		json.Unmarshal(procedure.Info, &processInfo)
+		isLate = GetIsLate(processInfo.Form.IndividualApplicationStage.Date[0])
+		if isLate {
+			status = "pre_start"
+		}
+		if len(stepHistory) > 0 {
+			status = "opened"
+		}
+	}
+	res := ProcessStatusRes{
+		Status:     status,
+		ProcessId:  procedure.ID,
+		Editable:   userId == procedure.UserId && (!isLate),
+		Createable: identity == "manager",
+	}
+	return HandleDBData(result, res)
+}
+
 func (p *ProcessModel) UpdateProcessFormData(id int, info mvc_struct.ProcessFormData) BaseModelFmtData {
 	jsonInfo, _ := json.Marshal(info)
 	var procedure db.Procedure
-	result := db.Mysql.Model(procedure).Where("id = ?", id).Update("info", jsonInfo)
+	result := db.Mysql.Model(&procedure).Where("id = ?", id).Update("info", jsonInfo)
 	return HandleDBData(result, id)
 }
 

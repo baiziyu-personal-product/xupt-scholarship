@@ -42,6 +42,16 @@ func (s *SignMvc) PostRegister() BaseControllerFmtData {
 	return HandleControllerRes(signModel, "注册")
 }
 
+func (s *SignMvc) GetOut() BaseControllerFmtData {
+	s.Session.Delete(s.Session.ID())
+	return HandleControllerRes(model.BaseModelFmtData{
+		Message: "success",
+		Data:    nil,
+		Error:   nil,
+		Code:    global.SuccessCode,
+	}, "注销")
+}
+
 // PostForget 忘记密码
 func (s *SignMvc) PostForget() BaseControllerFmtData {
 	var data mvc_struct.SignOfForget

@@ -16,11 +16,12 @@ type ApplyModel struct {
 func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData {
 	jsonForm, _ := json.Marshal(data.Form)
 	Application := db.Application{
-		Info:    jsonForm,
-		History: []byte("{}"),
-		UserId:  data.StudentId,
-		Status:  data.Type,
-		Step:    "",
+		Info:        jsonForm,
+		History:     []byte("{}"),
+		UserId:      data.StudentId,
+		Status:      data.Type,
+		Step:        "",
+		ProcedureId: processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id,
 	}
 	result := db.Mysql.Create(&Application)
 	return HandleDBData(result, Application.ID)
