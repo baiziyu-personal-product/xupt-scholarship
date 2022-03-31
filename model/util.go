@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 func GetPageLimit(pageCount int, pageIndex int) (int, int) {
 	return pageCount * (pageIndex - 1), pageCount * pageIndex
@@ -23,5 +25,5 @@ func GetIsLate(startDate string) bool {
 	currentLocation := time.Now().Location()
 	timeLayout := "2006-01-02"
 	start, _ := time.ParseInLocation(timeLayout, startDate, currentLocation)
-	return start.Sub(time.Now()).Hours() > 24
+	return start.Sub(time.Now()).Hours() < 24
 }
