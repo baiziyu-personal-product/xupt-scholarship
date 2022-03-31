@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/sessions"
 	"xupt-scholarship/global"
 	"xupt-scholarship/model"
 )
@@ -38,4 +39,10 @@ func HandleControllerRes(modelData model.BaseModelFmtData, message string) BaseC
 		data.Message += "失败"
 	}
 	return data
+}
+
+func GetUserData(session *sessions.Session) model.LoginUserInfo {
+	email := session.GetString(sessionId)
+	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	return user
 }

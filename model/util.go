@@ -18,3 +18,10 @@ func GetCurrentYear(startDate string) int64 {
 	temp, _ := time.ParseInLocation(timeLayout, date, currentLocation)
 	return temp.Unix()
 }
+
+func GetIsLate(startDate string) bool {
+	currentLocation := time.Now().Location()
+	timeLayout := "2006-01-02"
+	start, _ := time.ParseInLocation(timeLayout, startDate, currentLocation)
+	return start.Sub(time.Now()).Hours() > 24
+}

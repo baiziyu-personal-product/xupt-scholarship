@@ -23,7 +23,7 @@ func (s *SignMvc) PostLogin() BaseControllerFmtData {
 	var data mvc_struct.SignOfLogin
 	GetRequestParams(s.Ctx, &data)
 	signModel := SignModel.Login(data)
-	if signModel.Code == global.SuccessCode {
+	if signModel.Code == global.SuccessCode && signModel.Error == nil {
 		signModel.Data = middleware.GenerateToken(data.Email)
 		s.Session.Set(sessionId, data.Email)
 	}
@@ -40,6 +40,16 @@ func (s *SignMvc) PostRegister() BaseControllerFmtData {
 		s.Session.Set(sessionId, data.Email)
 	}
 	return HandleControllerRes(signModel, "注册")
+}
+
+func (s *SignMvc) GetOut() BaseControllerFmtData {
+	s.Session.Delete(s.Session.ID())
+	return HandleControllerRes(model.BaseModelFmtData{
+		Message: "success",
+		Data:    nil,
+		Error:   nil,
+		Code:    global.SuccessCode,
+	}, "注销")
 }
 
 // PostForget 忘记密码
