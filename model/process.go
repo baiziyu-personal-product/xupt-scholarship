@@ -63,6 +63,7 @@ type ProcessStatusRes struct {
 	Createable bool   `json:"createable"`
 }
 
+// GetCurrentYearProcess 获取当前学年的评定流程
 func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) BaseModelFmtData {
 	var procedure db.Procedure
 	var stepHistory []mvc_struct.ProcessHistoryItem
@@ -71,7 +72,11 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 	result := db.Mysql.Where("create_at > ?", yearTime).First(&procedure)
 	status := "not_create"
 	isLate := false
+	procedureId := -1
+	creatorId := userId
 	if result.Error == nil {
+		procedureId = procedure.ID
+		creatorId = procedure.UserId
 		json.Unmarshal(procedure.History, &stepHistory)
 		json.Unmarshal(procedure.Info, &processInfo)
 		isLate = GetIsLate(processInfo.Form.IndividualApplicationStage.Date[0])
@@ -84,9 +89,9 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 	}
 	res := ProcessStatusRes{
 		Status:     status,
-		ProcessId:  procedure.ID,
-		Editable:   userId == procedure.UserId && (!isLate),
-		Createable: identity == "manager",
+		ProcessId:  procedureId,
+		Editable:   userId == creatorId && (!isLate),
+		Createable: identity == "manager" && creatorId == userId && procedureId == -1,
 	}
 	return HandleDBData(result, res)
 }
