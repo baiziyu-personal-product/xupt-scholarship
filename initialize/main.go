@@ -8,7 +8,7 @@ import (
 
 // Init 初始化配置信息
 func Init() {
-	global.Settings = config.GetDevGlobalConfig()
+	global.Settings = config.GetProdGlobalConfig()
 	db.Mysql = db.NewMysql()
 	db.Redis = db.NewRedis()
 	db.InitSessionDB()
