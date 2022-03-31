@@ -73,7 +73,7 @@ CREATE TABLE `applications` (
   KEY `fk_app_procedure_id` (`procedure_id`),
   CONSTRAINT `fk_app_procedure_id` FOREIGN KEY (`procedure_id`) REFERENCES `procedures` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_app_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +134,7 @@ CREATE TABLE `procedures` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `fk_procedure_user_id` (`user_id`),
   CONSTRAINT `fk_procedure_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,6 +143,7 @@ CREATE TABLE `procedures` (
 
 LOCK TABLES `procedures` WRITE;
 /*!40000 ALTER TABLE `procedures` DISABLE KEYS */;
+INSERT INTO `procedures` VALUES (5,'{\"form\": {\"finish\": {\"date\": [\"2022-04-15\", \"2022-04-16\"], \"desc\": \"\", \"mentions\": [\"baiziyu-fe@outlook.com\", \"1737586014@qq.com\"]}, \"grade_announcement\": {\"date\": [\"2022-04-09\", \"2022-04-11\"], \"desc\": \"\", \"mentions\": []}, \"school_review_stage\": {\"date\": [\"2022-04-13\", \"2022-04-15\"], \"desc\": \"\", \"mentions\": []}, \"first_self_assessment\": {\"date\": [\"2022-04-02\", \"2022-04-04\"], \"desc\": \"\", \"mentions\": []}, \"policies_for_all_grades\": {\"date\": [\"2022-04-01\", \"2022-04-02\"], \"desc\": \"\", \"mentions\": [\"1737586014@qq.com\"]}, \"first_class_announcement\": {\"date\": [\"2022-04-04\", \"2022-04-05\"], \"desc\": \"\", \"mentions\": []}, \"second_class_announcement\": {\"date\": [\"2022-04-07\", \"2022-04-09\"], \"desc\": \"\", \"mentions\": []}, \"individual_application_stage\": {\"date\": [\"2022-03-31\", \"2022-04-01\"], \"desc\": \"\", \"mentions\": [\"baiziyu-fe@outlook.com\"]}, \"deployment_mobilization_phase\": {\"date\": [\"2022-03-30\", \"2022-03-31\"], \"desc\": \"\", \"mentions\": [\"baiziyu-fe@outlook.com\", \"1737586014@qq.com\"]}, \"second_personal_self_assessment\": {\"date\": [\"2022-04-05\", \"2022-04-07\"], \"desc\": \"\", \"mentions\": []}, \"examination_and_review_of_the_discipline_office\": {\"date\": [\"2022-04-09\", \"2022-04-11\"], \"desc\": \"\", \"mentions\": []}, \"verification_and_deliberation_by_the_scholarship_evaluation_group\": {\"date\": [\"2022-04-11\", \"2022-04-13\"], \"desc\": \"\", \"mentions\": []}}, \"upload\": {}}','[]','9542442',1648650765,1648650765,'[]');
 /*!40000 ALTER TABLE `procedures` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +171,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
   KEY `user_id_INDEX` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,6 +180,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (20,'白子煜','baiziyu-fe@outlook.com','18740312553','586014BZYbzy','student',1648550454,'http://127.0.0.1:8096/avatars/967672.jpg',NULL,1648550339,'04183180'),(22,'baiziyu','1737586014@qq.com','12445544123','586014BZYbzy','manager',1648555521,'http://127.0.0.1:8096/avatars/967672.jpg',NULL,1648555501,'9542442');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -191,4 +193,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-29 18:16:41
+-- Dump completed on 2022-03-31 22:51:59
