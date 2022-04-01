@@ -24,11 +24,8 @@ func (p *processMVC) Get() BaseControllerFmtData {
 }
 
 func (p *processMVC) GetBy(processId int) BaseControllerFmtData {
-	return BaseControllerFmtData{
-		Code:    1,
-		Message: "成功拉取申请流程",
-		Data:    nil,
-	}
+	m := ProcessModel.GetProcessFormData(processId)
+	return HandleControllerRes(m, "获取评定流程")
 }
 
 func (p *processMVC) Post() BaseControllerFmtData {
