@@ -22,7 +22,7 @@ func UseSignMvc(app *mvc.Application) {
 func (s *SignMvc) PostLogin() BaseControllerFmtData {
 	var data mvc_struct.SignOfLogin
 	GetRequestParams(s.Ctx, &data)
-	signModel := SignModel.Login(data)
+	signModel := SignModel.CheckUser(data)
 	if signModel.Code == global.SuccessCode && signModel.Error == nil {
 		signModel.Data = middleware.GenerateToken(data.Email)
 		s.Session.Set(sessionId, data.Email)
@@ -34,7 +34,7 @@ func (s *SignMvc) PostLogin() BaseControllerFmtData {
 func (s *SignMvc) PostRegister() BaseControllerFmtData {
 	var data mvc_struct.SignOfRegister
 	GetRequestParams(s.Ctx, &data)
-	signModel := SignModel.Register(data)
+	signModel := SignModel.CreateUser(data)
 	if signModel.Code == global.SuccessCode {
 		signModel.Data = middleware.GenerateToken(data.Email)
 		s.Session.Set(sessionId, data.Email)
@@ -42,6 +42,7 @@ func (s *SignMvc) PostRegister() BaseControllerFmtData {
 	return HandleControllerRes(signModel, "注册")
 }
 
+// GetOut 注销登录
 func (s *SignMvc) GetOut() BaseControllerFmtData {
 	s.Session.Delete(s.Session.ID())
 	return HandleControllerRes(model.BaseModelFmtData{

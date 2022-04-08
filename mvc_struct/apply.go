@@ -45,11 +45,13 @@ type practiceSocialFormValue struct {
 }
 
 type practiceCompetitionFormValue struct {
-	Level []string         `json:"level"`
-	Name  string           `json:"name"`
-	Time  string           `json:"time"`
-	Files []UploadFileItem `json:"files"`
-	Score float32          `json:"score" default:"0"`
+	Level    []string         `json:"level"`
+	Name     string           `json:"name"`
+	Time     string           `json:"time"`
+	Files    []UploadFileItem `json:"files"`
+	Score    float32          `json:"score" default:"0"`
+	Order    int              `json:"order" default:"1"`
+	Partners int              `json:"partners" default:"1"`
 }
 
 type practiceFormValue struct {
@@ -76,6 +78,8 @@ type academicScientificFormItem struct {
 	Distribute            int              `json:"distribute"`
 	Files                 []UploadFileItem `json:"files"`
 	Score                 float32          `json:"score" default:"0"`
+	Order                 int              `json:"order" default:"1"`
+	Partners              int              `json:"partners" default:"1"`
 }
 
 type academicDissertationFormItem struct {
@@ -135,4 +139,12 @@ type ApplyListParams struct {
 	PageIndex int    `json:"page_index" default:"1"`
 	IsCheck   bool   `json:"is_check" default:"false"`
 	LastDate  string `json:"last_date" default:""`
+}
+
+type ApplyListFilterParams struct {
+	UserId      string `json:"user_id"`
+	PageCount   int    `json:"page_count"`
+	PageIndex   int    `json:"page_index"`
+	IsCheck     string `json:"is_check"`
+	ProcedureId int    `json:"procedure_id"`
 }

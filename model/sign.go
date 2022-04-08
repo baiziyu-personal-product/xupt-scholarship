@@ -8,8 +8,15 @@ import (
 type SignModel struct {
 }
 
-// Login postLogin
-func (s *SignModel) Login(data mvc_struct.SignOfLogin) BaseModelFmtData {
+type SignModelInterface interface {
+	CheckUser(data mvc_struct.SignOfLogin) BaseModelFmtData
+	CreateUser(data mvc_struct.SignOfRegister) BaseModelFmtData
+}
+
+// >>>>>>>>>>>>>>>>>>> interface <<<<<<<<<<<<<<<<<<<<<<//
+
+// CheckUser 登录
+func (s *SignModel) CheckUser(data mvc_struct.SignOfLogin) BaseModelFmtData {
 	user := db.User{}
 	result := db.Mysql.Where(&db.User{
 		Email:    data.Email,
@@ -19,8 +26,8 @@ func (s *SignModel) Login(data mvc_struct.SignOfLogin) BaseModelFmtData {
 	return HandleDBData(result, user.UserId)
 }
 
-// Register postRegister
-func (s *SignModel) Register(data mvc_struct.SignOfRegister) BaseModelFmtData {
+// CreateUser 注册用户
+func (s *SignModel) CreateUser(data mvc_struct.SignOfRegister) BaseModelFmtData {
 	user := db.User{
 		Email:    data.Email,
 		Password: data.Password,

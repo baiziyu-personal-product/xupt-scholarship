@@ -11,17 +11,15 @@ import (
 type ProcessModel struct {
 }
 
-func (p *ProcessModel) CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData {
-	info, _ := json.Marshal(data)
-	process := db.Procedure{
-		CurrentStep: []byte("[]"),
-		UserId:      userId,
-		Info:        info,
-		History:     []byte("[]"),
-	}
-	result := db.Mysql.Create(&process)
-	return HandleDBData(result, process.ID)
+type ProcessModelInterface interface {
+	CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData
+	GetProcessFormData(id int) BaseModelFmtData
+	GetCurrentYearProcess(userId string, identity string) BaseModelFmtData
+	UpdateProcessFormData(id int, info mvc_struct.ProcessFormData) BaseModelFmtData
+	GetProcessStep(id int) BaseModelFmtData
 }
+
+// >>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<//
 
 type ProcedureModelFormData struct {
 	Id       int                        `json:"id"`
@@ -29,25 +27,6 @@ type ProcedureModelFormData struct {
 	UserId   string                     `json:"user_id"`
 	CreateAt string                     `json:"create_at"`
 	EditAt   string                     `json:"edit_at"`
-}
-
-func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
-	var processData mvc_struct.ProcessFormData
-	var processInfo db.Procedure
-	var result *gorm.DB
-	if id == -1 {
-		result = db.Mysql.Last(&processInfo)
-	} else {
-		result = db.Mysql.First(&processInfo, id)
-	}
-	json.Unmarshal(processInfo.Info, &processData)
-	return HandleDBData(result, ProcedureModelFormData{
-		Id:       id,
-		Form:     processData,
-		UserId:   processInfo.UserId,
-		CreateAt: utils.FmtTimeByUnix(processInfo.CreateAt),
-		EditAt:   utils.FmtTimeByUnix(processInfo.UpdateAt),
-	})
 }
 
 type CurrentYearProcessData struct {
@@ -61,6 +40,48 @@ type ProcessStatusRes struct {
 	ProcessId  int    `json:"process_id"`
 	Editable   bool   `json:"editable"`
 	Createable bool   `json:"createable"`
+}
+
+type stepData struct {
+	History []mvc_struct.ProcessHistoryItem `json:"history"`
+	Current mvc_struct.ProcessHistoryItem   `json:"current"`
+}
+
+// >>>>>>>>>>>>>> interface <<<<<<<<<<<<<<<//
+
+// TODO: 创建定时任务以及对应的数据处理
+
+// CreateProcess 获取评定流程
+func (p *ProcessModel) CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData {
+	info, _ := json.Marshal(data)
+	process := db.Procedure{
+		CurrentStep: []byte("[]"),
+		UserId:      userId,
+		Info:        info,
+		History:     []byte("[]"),
+	}
+	result := db.Mysql.Create(&process)
+	return HandleDBData(result, process.ID)
+}
+
+// GetProcessFormData 获取评定流程信息
+func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
+	var processData mvc_struct.ProcessFormData
+	var processInfo db.Procedure
+	var result *gorm.DB
+	if id == -1 {
+		result = db.Mysql.Last(&processInfo)
+	} else {
+		result = db.Mysql.First(&processInfo, id)
+	}
+	json.Unmarshal(processInfo.Info, &processData)
+	return HandleDBData(result, ProcedureModelFormData{
+		Id:       processInfo.ID,
+		Form:     processData,
+		UserId:   processInfo.UserId,
+		CreateAt: utils.FmtTimeByUnix(processInfo.CreateAt),
+		EditAt:   utils.FmtTimeByUnix(processInfo.UpdateAt),
+	})
 }
 
 // GetCurrentYearProcess 获取当前学年的评定流程
@@ -96,6 +117,7 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 	return HandleDBData(result, res)
 }
 
+// UpdateProcessFormData 更新评定流程
 func (p *ProcessModel) UpdateProcessFormData(id int, info mvc_struct.ProcessFormData) BaseModelFmtData {
 	jsonInfo, _ := json.Marshal(info)
 	var procedure db.Procedure
@@ -103,11 +125,7 @@ func (p *ProcessModel) UpdateProcessFormData(id int, info mvc_struct.ProcessForm
 	return HandleDBData(result, id)
 }
 
-type stepData struct {
-	History []mvc_struct.ProcessHistoryItem `json:"history"`
-	Current mvc_struct.ProcessHistoryItem   `json:"current"`
-}
-
+// GetProcessStep 获取评定当前进行步骤
 func (p *ProcessModel) GetProcessStep(id int) BaseModelFmtData {
 	var procedure db.Procedure
 	var stepHistory []mvc_struct.ProcessHistoryItem
