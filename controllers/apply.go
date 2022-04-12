@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/global"
 	"xupt-scholarship/model"
 	"xupt-scholarship/mvc_struct"
 )
@@ -25,8 +26,8 @@ type ApplyData struct {
 func (a *ApplyMVC) Get() BaseControllerFmtData {
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	applyId := applyModel.CheckIsExistThisYear(user.UserId)
-	return HandleControllerRes(applyId, "获取用户申请状态")
+	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
+	return HandleControllerRes(applyInfo, "获取用户申请状态")
 }
 
 // GetBy 获取对应ID的申请表单
@@ -69,6 +70,15 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	GetRequestParams(a.Ctx, &reqData)
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
+	// 当前年度内无法重复创建
+	if applyInfo.Error == nil {
+		return BaseControllerFmtData{
+			Message: "已存在当前年度申请奖学金表单，无法重复申请",
+			Code:    global.ErrorCode,
+			Data:    applyInfo.Data,
+		}
+	}
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
 		Form:      reqData,
 		StudentId: user.UserId,

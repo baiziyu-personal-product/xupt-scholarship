@@ -48,17 +48,18 @@ func (a *ApplyModel) CheckIsExistThisYear(userId string) BaseModelFmtData {
 
 // CreateApplyForm 创建奖学金申请
 func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData {
+	procedureId := processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
 	jsonForm, _ := json.Marshal(data.Form)
-	Application := db.Application{
+	newApplication := db.Application{
 		Info:        jsonForm,
 		History:     []byte("{}"),
 		UserId:      data.StudentId,
 		Status:      data.Type,
 		Step:        "",
-		ProcedureId: processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id,
+		ProcedureId: procedureId,
 	}
-	result := db.Mysql.Create(&Application)
-	return HandleDBData(result, Application.ID)
+	result := db.Mysql.Create(&newApplication)
+	return HandleDBData(result, newApplication.ID)
 }
 
 // UpdateApplyForm 更新奖学金信息
