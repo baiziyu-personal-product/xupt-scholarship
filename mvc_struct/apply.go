@@ -107,6 +107,7 @@ type academicFormValue struct {
 	Dissertation []academicDissertationFormItem `json:"dissertation"`
 	Publish      []academicPublishFormItem      `json:"publish"`
 	Score        float32                        `json:"score" default:"0"`
+	ScoreInfo    ApplyScoreInfo                 `json:"score_info"`
 }
 
 type ApplicationValue struct {
@@ -132,6 +133,7 @@ type UpdateApplyBaseInfo struct {
 	Form      ApplicationValue `json:"form"`
 	StudentId string           `json:"student_id"`
 	Type      string           `json:"type"`
+	ScoreInfo ApplyScoreInfo   `json:"score_info"`
 }
 
 type ApplyListParams struct {
@@ -147,4 +149,20 @@ type ApplyListFilterParams struct {
 	PageIndex   int    `json:"page_index"`
 	IsCheck     string `json:"is_check"`
 	ProcedureId int    `json:"procedure_id"`
+}
+
+type ApplyScoreInfo struct {
+	Moral    float32 `json:"moral"`
+	Practice float32 `json:"practice"`
+	Academic float32 `json:"academic"`
+}
+
+type ApplyHistoryStep struct {
+	UserId  string `json:"user_id"`
+	EditAt  string `json:"edit_at"`
+	Comment string `json:"comment"`
+}
+type ApplyHistoryData struct {
+	Step    ApplyHistoryStep   `json:"step"`
+	History []ApplyHistoryStep `json:"history"`
 }

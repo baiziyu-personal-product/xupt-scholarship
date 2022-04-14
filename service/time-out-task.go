@@ -5,11 +5,8 @@ import (
 	"time"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
+	ututils "xupt-scholarship/utils"
 )
-
-func GetCurrentTime() string {
-	return time.Now().Format("2006-01-02 15:04:05")
-}
 
 // AddProcessStep 添加ProcessStep
 func AddProcessStep(id int, task mvc_struct.ProcessTask) {
@@ -20,7 +17,7 @@ func AddProcessStep(id int, task mvc_struct.ProcessTask) {
 	if result.Error == nil {
 		json.Unmarshal(procedure.History, &stepHistory)
 		currentStep = mvc_struct.ProcessHistoryItem{
-			StartAt: GetCurrentTime(),
+			StartAt: ututils.GetCurrentTime(),
 			Step:    task.Step,
 		}
 		stepHistory = append(stepHistory, currentStep)

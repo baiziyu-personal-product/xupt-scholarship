@@ -56,20 +56,16 @@ func (a *ApplyMVC) GetFormList() BaseControllerFmtData {
 	return HandleControllerRes(applyData, "获取表单列表")
 }
 
-func (a *ApplyMVC) Post() BaseControllerFmtData {
-	return BaseControllerFmtData{
-		Message: "",
-		Code:    1,
-		Data:    nil,
-	}
+func (a *ApplyMVC) GetApplyHistory(id int) BaseControllerFmtData {
+	m := applyModel.GetApplyHistory(id)
+	return HandleControllerRes(m, "获取评定记录")
 }
 
 // PostHandleFormBy 创建奖学金申请
 func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	var reqData mvc_struct.ApplicationValue
 	GetRequestParams(a.Ctx, &reqData)
-	email := a.Session.GetString(sessionId)
-	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	user := GetUserData(a.Session)
 	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
 	// 当前年度内无法重复创建
 	if applyInfo.Error == nil {
@@ -87,12 +83,31 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	return HandleControllerRes(formModel, "申请信息创建")
 }
 
+type UpdateApplyScoreInfo struct {
+	ScoreInfo mvc_struct.ApplyScoreInfo `json:"score_info"`
+	Comment   string                    `json:"comment" default:""`
+}
+
+func (a *ApplyMVC) PostScoreBy(id int) BaseControllerFmtData {
+	var reqData UpdateApplyScoreInfo
+	GetRequestParams(a.Ctx, &reqData)
+	user := GetUserData(a.Session)
+	if user.Identity == "manager" || user.Identity == "student,manager" {
+		return BaseControllerFmtData{
+			Message: "没有权限参与当前评定",
+			Code:    global.ErrorCode,
+			Data:    nil,
+		}
+	}
+	res := applyModel.UpdateApplyScore(id, user.UserId, reqData.ScoreInfo, reqData.Comment)
+	return HandleControllerRes(res, "评定申请流程")
+}
+
 func (a *ApplyMVC) PutBy(applyId int, applyType string) BaseControllerFmtData {
 	var reqData mvc_struct.ApplicationValue
 	GetRequestParams(a.Ctx, &reqData)
-	email := a.Session.GetString(sessionId)
-	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	formModel := applyModel.UpdateApplyForm(mvc_struct.UpdateApplyBaseInfo{
+	user := GetUserData(a.Session)
+	formModel := applyModel.UpdateApplyForm(user.UserId, mvc_struct.UpdateApplyBaseInfo{
 		Form:      reqData,
 		Id:        applyId,
 		StudentId: user.UserId,

@@ -55,7 +55,7 @@ func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) Base
 		History:     []byte("{}"),
 		UserId:      data.StudentId,
 		Status:      data.Type,
-		Step:        "",
+		Step:        []byte("{}"),
 		ProcedureId: procedureId,
 	}
 	result := db.Mysql.Create(&newApplication)
@@ -63,19 +63,25 @@ func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) Base
 }
 
 // UpdateApplyForm 更新奖学金信息
-func (a *ApplyModel) UpdateApplyForm(data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData {
+func (a *ApplyModel) UpdateApplyForm(userId string, data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData {
 	jsonForm, _ := json.Marshal(data.Form)
+	scoreForm, _ := json.Marshal(data.ScoreInfo)
 	var apply db.Application
 	var updateMap = map[string]interface{}{
-		"status": data.Type,
-		"info":   string(jsonForm),
-		"score":  0,
+		"status":     data.Type,
+		"info":       string(jsonForm),
+		"score":      getScore(data.ScoreInfo),
+		"score_info": scoreForm,
 	}
-	result := db.Mysql.Model(&apply).Where("id = ?", data.Id).Updates(updateMap)
+	result := db.Mysql.Model(&apply).Where("id = ? AND user_id = ?", data.Id, userId).Updates(updateMap)
 	return HandleDBData(result, apply.ID)
 }
 
-// GetApplyData 申请评定信息
+func getScore(scoreInfo mvc_struct.ApplyScoreInfo) float32 {
+	return scoreInfo.Moral + scoreInfo.Practice + scoreInfo.Academic
+}
+
+// GetApplyData 获取申请信息
 func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtData {
 	var Application db.Application
 	result := db.Mysql.First(&Application, applyId)
@@ -121,4 +127,36 @@ func (a *ApplyModel) GetApplyList(filter mvc_struct.ApplyListFilterParams) BaseM
 		})
 	}
 	return HandleDBData(result, applyList)
+}
+
+func (a *ApplyModel) GetApplyHistory(id int) BaseModelFmtData {
+	var history []mvc_struct.ApplyHistoryStep
+	var step mvc_struct.ApplyHistoryStep
+	var application db.Application
+	result := db.Mysql.Where("id=?", id).First(&application)
+	json.Unmarshal(application.Step, &step)
+	json.Unmarshal(application.History, &history)
+	return HandleDBData(result, mvc_struct.ApplyHistoryData{
+		Step:    step,
+		History: history,
+	})
+
+}
+
+// UpdateApplyScore 更新奖学金成绩(评定阶段使用)
+func (a *ApplyModel) UpdateApplyScore(id int, userId string, data mvc_struct.ApplyScoreInfo, comment string) BaseModelFmtData {
+	stepForm, _ := json.Marshal(mvc_struct.ApplyHistoryStep{
+		UserId:  userId,
+		EditAt:  utils.GetCurrentTime(),
+		Comment: comment,
+	})
+	jsonForm, _ := json.Marshal(data)
+	var apply db.Application
+	var updateMap = map[string]interface{}{
+		"score_info": jsonForm,
+		"score":      getScore(data),
+		"step":       stepForm,
+	}
+	result := db.Mysql.Model(&apply).Where("id = ?", id).Updates(updateMap)
+	return HandleDBData(result, apply.ID)
 }
