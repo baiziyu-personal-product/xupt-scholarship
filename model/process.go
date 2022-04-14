@@ -75,7 +75,6 @@ func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
 		result = db.Mysql.First(&processInfo, id)
 	}
 	json.Unmarshal(processInfo.Info, &processData)
-	DispatchProcessNoticeEvent(processData)
 	return HandleDBData(result, ProcedureModelFormData{
 		Id:       processInfo.ID,
 		Form:     processData,

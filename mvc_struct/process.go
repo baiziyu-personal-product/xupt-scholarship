@@ -31,10 +31,8 @@ type ProcessFormData struct {
 }
 
 type ProcessHistoryItem struct {
-	StartAt  int64  `json:"start_at"`
-	EndAt    int64  `json:"end_at"`
-	Duration int64  `json:"duration"`
-	Step     string `json:"step"`
+	StartAt string `json:"start_at"`
+	Step    string `json:"step"`
 }
 
 type ProcessTask struct {

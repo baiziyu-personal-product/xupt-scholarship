@@ -22,7 +22,6 @@ func GetCurrentYear(startDate string) int64 {
 		firstOfYear := time.Date(currentYear, time.January, 1, 0, 0, 0, 0, currentLocation)
 		return firstOfYear.Unix()
 	}
-	timeLayout := "2006-01-02"
 	temp, _ := time.ParseInLocation(timeLayout, date, currentLocation)
 	return temp.Unix()
 }
@@ -39,7 +38,7 @@ func GetDateDurationByHour(startDate string) float64 {
 }
 
 // DispatchProcessNoticeEvent 创建流程通知事件
-func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData) {
+func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData, processId int) {
 	var processTasks []mvc_struct.ProcessTask
 	processTypes := reflect.TypeOf(processInfo.Form)
 	processValues := reflect.ValueOf(processInfo.Form)
@@ -53,7 +52,7 @@ func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData) {
 			processTasks,
 			mvc_struct.ProcessTask{
 				Name:       stepMap.Field(i).String(),
-				Step:       stepKey.Field(i).Name,
+				Step:       stepKey.Field(i).Tag.Get("json"),
 				Duration:   GetDateDurationByHour(stepValue.Date[0]),
 				NotifyList: stepValue.Mentions,
 				Date:       stepValue.Date,
@@ -69,7 +68,7 @@ func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData) {
 			})
 	}
 	mentions = removeDuplicationMap(mentions)
-	service.HandleProcessTask(processTasks, mentions)
+	service.HandleProcessTask(processTasks, mentions, processId)
 }
 
 // removeDuplicationMap 去重
