@@ -62,18 +62,19 @@ CREATE TABLE `applications` (
   `update_at` bigint NOT NULL,
   `status` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '"save"' COMMENT 'save\\nsubmit\\nfinish\\ndroped\\nerror',
   `info` json NOT NULL,
-  `step` varchar(320) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '当前进行步骤',
   `history` json NOT NULL,
   `score` float NOT NULL DEFAULT '0',
   `user_id` varchar(20) COLLATE utf8_bin NOT NULL,
   `procedure_id` int NOT NULL,
+  `score_info` json DEFAULT NULL,
+  `step` json DEFAULT NULL,
   PRIMARY KEY (`id`,`user_id`,`procedure_id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `stu_id_PRIMARY` (`user_id`),
   KEY `fk_app_procedure_id` (`procedure_id`),
   CONSTRAINT `fk_app_procedure_id` FOREIGN KEY (`procedure_id`) REFERENCES `procedures` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_app_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='申请';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,6 +83,7 @@ CREATE TABLE `applications` (
 
 LOCK TABLES `applications` WRITE;
 /*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+INSERT INTO `applications` VALUES (29,1649402894,1649403931,'submit','{\"moral\": {\"list\": [{\"info\": \"\", \"name\": \"国家奖学金\", \"time\": \"2022-04-06T07:27:47.870Z\", \"files\": null, \"level\": \"national\", \"score\": 0}], \"score\": 0}, \"score\": 0, \"academic\": {\"award\": [{\"name\": \"静思成功\", \"time\": \"2022-04-01T07:18:06.802Z\", \"files\": [], \"level\": [\"provincial\", \"second\"], \"score\": 0}], \"score\": 0, \"publish\": [{\"name\": \"js导论\", \"time\": \"2022-04-07T07:39:18.842Z\", \"files\": null, \"level\": \"a_publishing_house\", \"score\": 0, \"fonts_count\": 2, \"publish_house_name\": \"工业出版社\"}], \"scientific\": [{\"name\": \"挑战书\", \"time\": [\"2022-04-01T07:38:33.915Z\", \"2022-04-02T07:38:33.915Z\"], \"files\": null, \"level\": \"national\", \"order\": 1, \"score\": 0, \"partners\": 1, \"funds_due\": 1, \"distribute\": 1, \"funds_actually_received\": 1}], \"dissertation\": [{\"name\": \"sci\", \"time\": \"2022-04-05T07:38:59.337Z\", \"files\": null, \"level\": \"SCI_2\", \"score\": 0, \"id_number\": \"25\"}]}, \"practice\": {\"score\": 0, \"result\": [{\"name\": \"互联网竞赛\", \"time\": \"2022-04-04T07:27:58.096Z\", \"files\": null, \"level\": \"national\", \"order\": 1, \"score\": 0, \"partners\": 1}], \"social\": {\"cadre\": [{\"level\": [\"leader\", \"研究生会主席\"], \"score\": 0, \"department\": \"部门负责人\"}], \"score\": 0, \"activity\": [{\"name\": \"校园行\", \"time\": [\"2021-04-15T07:18:06.802Z\", \"2021-04-22T07:18:06.802Z\"], \"files\": [], \"level\": \"college_activities\", \"score\": 0}]}, \"competition\": [{\"name\": \"竞赛杯\", \"time\": \"2022-04-08T07:18:06.802Z\", \"files\": [], \"level\": [\"national\", \"first\"], \"order\": 1, \"score\": 0, \"partners\": 1}]}}','{}',0,'04183180',5,NULL,NULL);
 /*!40000 ALTER TABLE `applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,4 +195,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-31 22:51:59
+-- Dump completed on 2022-04-14 21:41:30
