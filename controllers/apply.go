@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/kataras/iris/v12/mvc"
+	"xupt-scholarship/global"
 	"xupt-scholarship/model"
 	"xupt-scholarship/mvc_struct"
 )
@@ -21,6 +22,15 @@ type ApplyData struct {
 	EditAble bool        `json:"edit_able"`
 }
 
+// Get 获取用户是否创建本年度流程的申请表单
+func (a *ApplyMVC) Get() BaseControllerFmtData {
+	email := a.Session.GetString(sessionId)
+	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
+	return HandleControllerRes(applyInfo, "获取用户申请状态")
+}
+
+// GetBy 获取对应ID的申请表单
 func (a *ApplyMVC) GetBy(applyId int) BaseControllerFmtData {
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
@@ -28,41 +38,43 @@ func (a *ApplyMVC) GetBy(applyId int) BaseControllerFmtData {
 	return HandleControllerRes(applyData, "获取申请表单")
 }
 
+// GetFormList 获取对应筛选条件下的申请表单，支持分页，默认返回最近学年
 func (a *ApplyMVC) GetFormList() BaseControllerFmtData {
 	pageCount := a.Ctx.URLParamIntDefault("page_count", 10)
 	pageIndex := a.Ctx.URLParamIntDefault("page_index", 1)
 	isCheck := a.Ctx.URLParamDefault("is_check", "manager")
-	lastDate := a.Ctx.URLParamDefault("last_date", "")
+	procedureId := a.Ctx.URLParamIntDefault("procedure_id", -1)
 	email := a.Session.GetString(sessionId)
 	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	applyData := applyModel.GetApplyList(
-		user.UserId,
-		pageCount,
-		pageIndex,
-		isCheck,
-		lastDate,
-	)
+	applyData := applyModel.GetApplyList(mvc_struct.ApplyListFilterParams{
+		UserId:      user.UserId,
+		PageCount:   pageCount,
+		PageIndex:   pageIndex,
+		IsCheck:     isCheck,
+		ProcedureId: procedureId,
+	})
 	return HandleControllerRes(applyData, "获取表单列表")
 }
 
-func (a *ApplyMVC) Post() BaseControllerFmtData {
-	return BaseControllerFmtData{
-		Message: "",
-		Code:    1,
-		Data:    nil,
-	}
+func (a *ApplyMVC) GetApplyHistory(id int) BaseControllerFmtData {
+	m := applyModel.GetApplyHistory(id)
+	return HandleControllerRes(m, "获取评定记录")
 }
 
-type handleFormReqParams struct {
-	Id    int                         `json:"id" default:"-1"`
-	Value mvc_struct.ApplicationValue `json:"value"`
-}
-
+// PostHandleFormBy 创建奖学金申请
 func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	var reqData mvc_struct.ApplicationValue
 	GetRequestParams(a.Ctx, &reqData)
-	email := a.Session.GetString(sessionId)
-	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
+	user := GetUserData(a.Session)
+	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
+	// 当前年度内无法重复创建
+	if applyInfo.Error == nil {
+		return BaseControllerFmtData{
+			Message: "已存在当前年度申请奖学金表单，无法重复申请",
+			Code:    global.ErrorCode,
+			Data:    applyInfo.Data,
+		}
+	}
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
 		Form:      reqData,
 		StudentId: user.UserId,
@@ -71,12 +83,31 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	return HandleControllerRes(formModel, "申请信息创建")
 }
 
+type UpdateApplyScoreInfo struct {
+	ScoreInfo mvc_struct.ApplyScoreInfo `json:"score_info"`
+	Comment   string                    `json:"comment" default:""`
+}
+
+func (a *ApplyMVC) PostScoreBy(id int) BaseControllerFmtData {
+	var reqData UpdateApplyScoreInfo
+	GetRequestParams(a.Ctx, &reqData)
+	user := GetUserData(a.Session)
+	if user.Identity == "manager" || user.Identity == "student,manager" {
+		return BaseControllerFmtData{
+			Message: "没有权限参与当前评定",
+			Code:    global.ErrorCode,
+			Data:    nil,
+		}
+	}
+	res := applyModel.UpdateApplyScore(id, user.UserId, reqData.ScoreInfo, reqData.Comment)
+	return HandleControllerRes(res, "评定申请流程")
+}
+
 func (a *ApplyMVC) PutBy(applyId int, applyType string) BaseControllerFmtData {
 	var reqData mvc_struct.ApplicationValue
 	GetRequestParams(a.Ctx, &reqData)
-	email := a.Session.GetString(sessionId)
-	user := UserModel.GetUser(email).Data.(model.LoginUserInfo)
-	formModel := applyModel.UpdateApplyForm(mvc_struct.UpdateApplyBaseInfo{
+	user := GetUserData(a.Session)
+	formModel := applyModel.UpdateApplyForm(user.UserId, mvc_struct.UpdateApplyBaseInfo{
 		Form:      reqData,
 		Id:        applyId,
 		StudentId: user.UserId,

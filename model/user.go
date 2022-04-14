@@ -8,6 +8,23 @@ import (
 type UserModel struct {
 }
 
+type UserModelInterface interface {
+	GetUserList() BaseModelFmtData
+	GetUser(email string) BaseModelFmtData
+	UpdateUser(email string, info mvc_struct.UpdateUserInfo) BaseModelFmtData
+}
+
+// >>>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<<//
+
+type LoginUserInfo struct {
+	UserBaseInfo
+	Phone    string `json:"phone"`
+	Identity string `json:"identity"`
+	UserId   string `json:"user_id"`
+}
+
+// >>>>>>>>>>>>>>> interface <<<<<<<<<<<<<//
+
 type UserBaseInfo struct {
 	Name   string `json:"name"`
 	Email  string `json:"email"`
@@ -28,13 +45,6 @@ func (u *UserModel) GetUserList() BaseModelFmtData {
 		}
 	}
 	return HandleDBData(result, userList)
-}
-
-type LoginUserInfo struct {
-	UserBaseInfo
-	Phone    string `json:"phone"`
-	Identity string `json:"identity"`
-	UserId   string `json:"user_id"`
 }
 
 func (u *UserModel) GetUser(email string) BaseModelFmtData {

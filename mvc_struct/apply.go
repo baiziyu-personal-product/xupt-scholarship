@@ -45,11 +45,13 @@ type practiceSocialFormValue struct {
 }
 
 type practiceCompetitionFormValue struct {
-	Level []string         `json:"level"`
-	Name  string           `json:"name"`
-	Time  string           `json:"time"`
-	Files []UploadFileItem `json:"files"`
-	Score float32          `json:"score" default:"0"`
+	Level    []string         `json:"level"`
+	Name     string           `json:"name"`
+	Time     string           `json:"time"`
+	Files    []UploadFileItem `json:"files"`
+	Score    float32          `json:"score" default:"0"`
+	Order    int              `json:"order" default:"1"`
+	Partners int              `json:"partners" default:"1"`
 }
 
 type practiceFormValue struct {
@@ -76,6 +78,8 @@ type academicScientificFormItem struct {
 	Distribute            int              `json:"distribute"`
 	Files                 []UploadFileItem `json:"files"`
 	Score                 float32          `json:"score" default:"0"`
+	Order                 int              `json:"order" default:"1"`
+	Partners              int              `json:"partners" default:"1"`
 }
 
 type academicDissertationFormItem struct {
@@ -103,6 +107,7 @@ type academicFormValue struct {
 	Dissertation []academicDissertationFormItem `json:"dissertation"`
 	Publish      []academicPublishFormItem      `json:"publish"`
 	Score        float32                        `json:"score" default:"0"`
+	ScoreInfo    ApplyScoreInfo                 `json:"score_info"`
 }
 
 type ApplicationValue struct {
@@ -128,6 +133,7 @@ type UpdateApplyBaseInfo struct {
 	Form      ApplicationValue `json:"form"`
 	StudentId string           `json:"student_id"`
 	Type      string           `json:"type"`
+	ScoreInfo ApplyScoreInfo   `json:"score_info"`
 }
 
 type ApplyListParams struct {
@@ -135,4 +141,28 @@ type ApplyListParams struct {
 	PageIndex int    `json:"page_index" default:"1"`
 	IsCheck   bool   `json:"is_check" default:"false"`
 	LastDate  string `json:"last_date" default:""`
+}
+
+type ApplyListFilterParams struct {
+	UserId      string `json:"user_id"`
+	PageCount   int    `json:"page_count"`
+	PageIndex   int    `json:"page_index"`
+	IsCheck     string `json:"is_check"`
+	ProcedureId int    `json:"procedure_id"`
+}
+
+type ApplyScoreInfo struct {
+	Moral    float32 `json:"moral"`
+	Practice float32 `json:"practice"`
+	Academic float32 `json:"academic"`
+}
+
+type ApplyHistoryStep struct {
+	UserId  string `json:"user_id"`
+	EditAt  string `json:"edit_at"`
+	Comment string `json:"comment"`
+}
+type ApplyHistoryData struct {
+	Step    ApplyHistoryStep   `json:"step"`
+	History []ApplyHistoryStep `json:"history"`
 }

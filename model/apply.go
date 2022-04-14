@@ -13,31 +13,15 @@ var processModel ProcessModel
 type ApplyModel struct {
 }
 
-func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData {
-	jsonForm, _ := json.Marshal(data.Form)
-	Application := db.Application{
-		Info:        jsonForm,
-		History:     []byte("{}"),
-		UserId:      data.StudentId,
-		Status:      data.Type,
-		Step:        "",
-		ProcedureId: processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id,
-	}
-	result := db.Mysql.Create(&Application)
-	return HandleDBData(result, Application.ID)
+type ApplyModelInterface interface {
+	CheckIsExistThisYear(userId string) BaseModelFmtData
+	CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData
+	UpdateApplyForm(data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData
+	GetApplyData(applyId int, studentId string) BaseModelFmtData
+	GetApplyList(filter mvc_struct.ApplyListFilterParams) BaseModelFmtData
 }
 
-func (a *ApplyModel) UpdateApplyForm(data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData {
-	jsonForm, _ := json.Marshal(data.Form)
-	var apply db.Application
-	var updateMap = map[string]interface{}{
-		"status": data.Type,
-		"info":   string(jsonForm),
-		"score":  0,
-	}
-	result := db.Mysql.Model(&apply).Where("id = ?", data.Id).Updates(updateMap)
-	return HandleDBData(result, apply.ID)
-}
+// >>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<<<<//
 
 type ApplyFormBaseData struct {
 	Id       int    `json:"id"`
@@ -52,6 +36,52 @@ type ApplyFormData struct {
 	Form mvc_struct.ApplicationValue `json:"form"`
 }
 
+// >>>>>>>>>>>>>> interface <<<<<<<<<<<<<<<//
+
+// CheckIsExistThisYear 检查是否存在当前学年的奖学金申请
+func (a *ApplyModel) CheckIsExistThisYear(userId string) BaseModelFmtData {
+	var application db.Application
+	procedureId := processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
+	result := db.Mysql.Where("procedure_id = ? AND user_id = ?", procedureId, userId).Find(&application)
+	return HandleDBData(result, application.ID)
+}
+
+// CreateApplyForm 创建奖学金申请
+func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData {
+	procedureId := processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
+	jsonForm, _ := json.Marshal(data.Form)
+	newApplication := db.Application{
+		Info:        jsonForm,
+		History:     []byte("{}"),
+		UserId:      data.StudentId,
+		Status:      data.Type,
+		Step:        []byte("{}"),
+		ProcedureId: procedureId,
+	}
+	result := db.Mysql.Create(&newApplication)
+	return HandleDBData(result, newApplication.ID)
+}
+
+// UpdateApplyForm 更新奖学金信息
+func (a *ApplyModel) UpdateApplyForm(userId string, data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData {
+	jsonForm, _ := json.Marshal(data.Form)
+	scoreForm, _ := json.Marshal(data.ScoreInfo)
+	var apply db.Application
+	var updateMap = map[string]interface{}{
+		"status":     data.Type,
+		"info":       string(jsonForm),
+		"score":      getScore(data.ScoreInfo),
+		"score_info": scoreForm,
+	}
+	result := db.Mysql.Model(&apply).Where("id = ? AND user_id = ?", data.Id, userId).Updates(updateMap)
+	return HandleDBData(result, apply.ID)
+}
+
+func getScore(scoreInfo mvc_struct.ApplyScoreInfo) float32 {
+	return scoreInfo.Moral + scoreInfo.Practice + scoreInfo.Academic
+}
+
+// GetApplyData 获取申请信息
 func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtData {
 	var Application db.Application
 	result := db.Mysql.First(&Application, applyId)
@@ -68,32 +98,22 @@ func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtDat
 	})
 }
 
-func (a *ApplyModel) GetApplyList(
-	userId string,
-	pageCount int,
-	pageIndex int,
-	isCheck string,
-	lastDate string,
-) BaseModelFmtData {
+// GetApplyList 获取申请列表，用于评审
+func (a *ApplyModel) GetApplyList(filter mvc_struct.ApplyListFilterParams) BaseModelFmtData {
 	var applyList []ApplyFormBaseData
 	var application db.Application
 	var ApplicationList []db.Application
-	var startDate string
-	if lastDate == "" {
-		startDate = lastDate
-	} else {
-		// 获取最近一次发布奖学金申请流程
-		// 并且获取其中运行学生申请奖学金的时间
-		startDate = processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Form.Form.IndividualApplicationStage.Date[0]
+	processId := filter.ProcedureId
+	if processId == -1 {
+		processId = processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
 	}
-	yearTime := GetCurrentYear(startDate)
 	// 分页
-	offset, limit := GetPageLimit(pageCount, pageIndex)
+	offset, limit := GetPageLimit(filter.PageCount, filter.PageIndex)
 	var result *gorm.DB
-	if isCheck == "manager" {
-		result = db.Mysql.Limit(limit).Offset(offset).Where("create_at > ?", yearTime).Find(&ApplicationList)
+	if filter.IsCheck == "manager" {
+		result = db.Mysql.Limit(limit).Offset(offset).Where("procedure_id = ?", filter.ProcedureId).Find(&ApplicationList)
 	} else {
-		result = db.Mysql.Limit(limit).Offset(offset).Where("user_id = ? AND create_at > ?", userId, yearTime).Find(&ApplicationList)
+		result = db.Mysql.Limit(limit).Offset(offset).Where("user_id = ? AND procedure_id = ?", filter.UserId, processId).Find(&ApplicationList)
 	}
 	for _, apply := range ApplicationList {
 		var applicationData mvc_struct.ApplicationValue
@@ -107,4 +127,36 @@ func (a *ApplyModel) GetApplyList(
 		})
 	}
 	return HandleDBData(result, applyList)
+}
+
+func (a *ApplyModel) GetApplyHistory(id int) BaseModelFmtData {
+	var history []mvc_struct.ApplyHistoryStep
+	var step mvc_struct.ApplyHistoryStep
+	var application db.Application
+	result := db.Mysql.Where("id=?", id).First(&application)
+	json.Unmarshal(application.Step, &step)
+	json.Unmarshal(application.History, &history)
+	return HandleDBData(result, mvc_struct.ApplyHistoryData{
+		Step:    step,
+		History: history,
+	})
+
+}
+
+// UpdateApplyScore 更新奖学金成绩(评定阶段使用)
+func (a *ApplyModel) UpdateApplyScore(id int, userId string, data mvc_struct.ApplyScoreInfo, comment string) BaseModelFmtData {
+	stepForm, _ := json.Marshal(mvc_struct.ApplyHistoryStep{
+		UserId:  userId,
+		EditAt:  utils.GetCurrentTime(),
+		Comment: comment,
+	})
+	jsonForm, _ := json.Marshal(data)
+	var apply db.Application
+	var updateMap = map[string]interface{}{
+		"score_info": jsonForm,
+		"score":      getScore(data),
+		"step":       stepForm,
+	}
+	result := db.Mysql.Model(&apply).Where("id = ?", id).Updates(updateMap)
+	return HandleDBData(result, apply.ID)
 }
