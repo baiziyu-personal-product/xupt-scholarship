@@ -45,6 +45,10 @@ func (p *processMVC) Post() BaseControllerFmtData {
 		}
 	}
 	m := ProcessModel.CreateProcess(processInfo, user.UserId)
+
+	if m.Error == nil {
+
+	}
 	return HandleControllerRes(m, "创建流程")
 }
 
