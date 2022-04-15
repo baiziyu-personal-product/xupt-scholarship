@@ -18,6 +18,13 @@ func UseSignMvc(app *mvc.Application) {
 	app.Register(userSession.Start).Handle(new(SignMvc))
 }
 
+type SignController interface {
+	PostLogin() BaseControllerFmtData
+	PostRegister() BaseControllerFmtData
+	GetOut() BaseControllerFmtData
+	PostForget() BaseControllerFmtData
+}
+
 // PostLogin 登录
 func (s *SignMvc) PostLogin() BaseControllerFmtData {
 	var data mvc_struct.SignOfLogin

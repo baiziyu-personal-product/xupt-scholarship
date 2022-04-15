@@ -7,28 +7,35 @@ import (
 	"xupt-scholarship/mvc_struct"
 )
 
-type processMVC struct {
+type ProcessMVC struct {
 	BaseController
+}
+
+type ProcessController interface {
+	Get() BaseControllerFmtData
+	GetBy(processId int) BaseControllerFmtData
+	Post() BaseControllerFmtData
+	PutBy(processId int) BaseControllerFmtData
 }
 
 var ProcessModel model.ProcessModel
 
 func UseProcessMVC(app *mvc.Application) {
-	app.Register(userSession.Start).Handle(new(processMVC))
+	app.Register(userSession.Start).Handle(new(ProcessMVC))
 }
 
-func (p *processMVC) Get() BaseControllerFmtData {
+func (p *ProcessMVC) Get() BaseControllerFmtData {
 	user := GetUserData(p.Session)
 	m := ProcessModel.GetCurrentYearProcess(user.UserId, user.Identity)
 	return HandleControllerRes(m, "获取评定信息")
 }
 
-func (p *processMVC) GetBy(processId int) BaseControllerFmtData {
+func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
 	m := ProcessModel.GetProcessFormData(processId)
 	return HandleControllerRes(m, "获取评定流程")
 }
 
-func (p *processMVC) Post() BaseControllerFmtData {
+func (p *ProcessMVC) Post() BaseControllerFmtData {
 	var processInfo mvc_struct.ProcessFormData
 	GetRequestParams(p.Ctx, &processInfo)
 	user := GetUserData(p.Session)
@@ -52,7 +59,7 @@ func (p *processMVC) Post() BaseControllerFmtData {
 	return HandleControllerRes(m, "创建流程")
 }
 
-func (p *processMVC) PutBy(processId int) BaseControllerFmtData {
+func (p *ProcessMVC) PutBy(processId int) BaseControllerFmtData {
 	var processInfo mvc_struct.ProcessFormData
 	GetRequestParams(p.Ctx, &processInfo)
 	user := GetUserData(p.Session)

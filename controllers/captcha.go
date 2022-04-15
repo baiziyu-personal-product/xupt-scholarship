@@ -14,6 +14,15 @@ type CaptchaMVC struct {
 	BaseController
 }
 
+type CaptchaController interface {
+	GetBy(imgPath string)
+	PostVerify() BaseControllerFmtData
+	Get() BaseControllerFmtData
+	GetReload() BaseControllerFmtData
+}
+
+//>>>>>>>>>>>>>>>>>>struct <<<<<<<<<<<<<<<//
+
 type CaptchaStore struct {
 }
 
@@ -38,6 +47,8 @@ func (CS *CaptchaStore) Get(id string, clear bool) (digits []byte) {
 func UseCaptchaMVC(app *mvc.Application) {
 	app.Handle(new(CaptchaMVC))
 }
+
+//>>>>>>>>>>>>>>>>> controllers <<<<<<<<<<<<<<<<//
 
 func (C *CaptchaMVC) GetBy(imgPath string) {
 	w, r := C.Ctx.ResponseWriter(), C.Ctx.Request()

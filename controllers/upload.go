@@ -14,6 +14,14 @@ type UploadMVC struct {
 	BaseController
 }
 
+type UploadController interface {
+	OptionsSingle() BaseControllerFmtData
+	PostSingleBy(upType string) BaseControllerFmtData
+	Options() BaseControllerFmtData
+	Post() BaseControllerFmtData
+	PostStudentList() BaseControllerFmtData
+}
+
 func UseUploadMVC(app *mvc.Application) {
 	app.Handle(new(UploadMVC))
 }
