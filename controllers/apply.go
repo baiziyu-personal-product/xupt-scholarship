@@ -11,16 +11,35 @@ type ApplyMVC struct {
 	BaseController
 }
 
+type ApplyController interface {
+	Get() BaseControllerFmtData
+	GetBy(applyId int) BaseControllerFmtData
+	GetFormList() BaseControllerFmtData
+	GetApplyHistory(id int) BaseControllerFmtData
+	PostHandleFormBy(handleType string) BaseControllerFmtData
+	PostScoreBy(id int) BaseControllerFmtData
+	PutBy(applyId int, applyType string) BaseControllerFmtData
+}
+
 var applyModel model.ApplyModel
 
 func UseApplyMVC(app *mvc.Application) {
 	app.Register(userSession.Start).Handle(new(ApplyMVC))
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<<<<<<<<<<<<<//
+
 type ApplyData struct {
 	Data     interface{} `json:"data"`
 	EditAble bool        `json:"edit_able"`
 }
+
+type UpdateApplyScoreInfo struct {
+	ScoreInfo mvc_struct.ApplyScoreInfo `json:"score_info"`
+	Comment   string                    `json:"comment" default:""`
+}
+//>>>>>>>>>>>>>>>>>>>>> controllers <<<<<<<<<<<<<<<<<<<<//
+
 
 // Get 获取用户是否创建本年度流程的申请表单
 func (a *ApplyMVC) Get() BaseControllerFmtData {
@@ -83,10 +102,6 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 	return HandleControllerRes(formModel, "申请信息创建")
 }
 
-type UpdateApplyScoreInfo struct {
-	ScoreInfo mvc_struct.ApplyScoreInfo `json:"score_info"`
-	Comment   string                    `json:"comment" default:""`
-}
 
 func (a *ApplyMVC) PostScoreBy(id int) BaseControllerFmtData {
 	var reqData UpdateApplyScoreInfo

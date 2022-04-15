@@ -16,9 +16,11 @@ type ApplyModel struct {
 type ApplyModelInterface interface {
 	CheckIsExistThisYear(userId string) BaseModelFmtData
 	CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) BaseModelFmtData
-	UpdateApplyForm(data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData
+	UpdateApplyForm(userId string, data mvc_struct.UpdateApplyBaseInfo) BaseModelFmtData
 	GetApplyData(applyId int, studentId string) BaseModelFmtData
 	GetApplyList(filter mvc_struct.ApplyListFilterParams) BaseModelFmtData
+	GetApplyHistory(id int) BaseModelFmtData
+	UpdateApplyScore(id int, userId string, data mvc_struct.ApplyScoreInfo, comment string) BaseModelFmtData
 }
 
 // >>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<<<<//
