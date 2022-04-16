@@ -114,13 +114,18 @@ type ApplicationValue struct {
 	Moral    moralFormValue    `json:"moral"`
 	Practice practiceFormValue `json:"practice"`
 	Academic academicFormValue `json:"academic"`
-	Score    float32           `json:"score" default:"0"`
+}
+
+type ApplicationRequest struct {
+	ApplicationValue
+	ScoreInfo ApplyScoreInfo `json:"score_info"`
 }
 
 type CreateApplyByBaseInfo struct {
 	Form      ApplicationValue `json:"form"`
 	StudentId string           `json:"student_id"`
 	Type      string           `json:"type"`
+	ScoreInfo ApplyScoreInfo   `json:"score_info"`
 }
 
 type SearchApplyByBaseInfo struct {
@@ -155,12 +160,14 @@ type ApplyScoreInfo struct {
 	Moral    float32 `json:"moral"`
 	Practice float32 `json:"practice"`
 	Academic float32 `json:"academic"`
+	Sum      float32 `json:"sum"`
 }
 
 type ApplyHistoryStep struct {
-	UserId  string `json:"user_id"`
-	EditAt  string `json:"edit_at"`
-	Comment string `json:"comment"`
+	UserId   string `json:"user_id"`
+	EditAt   string `json:"edit_at"`
+	Comment  string `json:"comment"`
+	Identity string `json:"identity"`
 }
 type ApplyHistoryData struct {
 	Step    ApplyHistoryStep   `json:"step"`

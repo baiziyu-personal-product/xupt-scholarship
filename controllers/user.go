@@ -36,8 +36,8 @@ func (u *UserMvc) GetList() BaseControllerFmtData {
 
 func (u *UserMvc) PostUpdateUserInfo() BaseControllerFmtData {
 	var info mvc_struct.UpdateUserInfo
-	email := u.Session.GetString(sessionId)
+	user := GetUserData(u.Session)
 	GetRequestParams(u.Ctx, &info)
-	res := UserModel.UpdateUser(email, info)
+	res := UserModel.UpdateUser(user.Email, user.Identity, info)
 	return HandleControllerRes(res, "更新用户信息")
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/kataras/iris/v12/mvc"
 	"xupt-scholarship/global"
 	"xupt-scholarship/model"
@@ -34,12 +35,7 @@ type ApplyData struct {
 	EditAble bool        `json:"edit_able"`
 }
 
-type UpdateApplyScoreInfo struct {
-	ScoreInfo mvc_struct.ApplyScoreInfo `json:"score_info"`
-	Comment   string                    `json:"comment" default:""`
-}
 //>>>>>>>>>>>>>>>>>>>>> controllers <<<<<<<<<<<<<<<<<<<<//
-
 
 // Get 获取用户是否创建本年度流程的申请表单
 func (a *ApplyMVC) Get() BaseControllerFmtData {
@@ -82,7 +78,7 @@ func (a *ApplyMVC) GetApplyHistory(id int) BaseControllerFmtData {
 
 // PostHandleFormBy 创建奖学金申请
 func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
-	var reqData mvc_struct.ApplicationValue
+	var reqData mvc_struct.ApplicationRequest
 	GetRequestParams(a.Ctx, &reqData)
 	user := GetUserData(a.Session)
 	applyInfo := applyModel.CheckIsExistThisYear(user.UserId)
@@ -95,26 +91,31 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 		}
 	}
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
-		Form:      reqData,
+		Form: mvc_struct.ApplicationValue{
+			Moral:    reqData.Moral,
+			Practice: reqData.Practice,
+			Academic: reqData.Academic,
+		},
 		StudentId: user.UserId,
 		Type:      handleType,
+		ScoreInfo: reqData.ScoreInfo,
 	})
 	return HandleControllerRes(formModel, "申请信息创建")
 }
 
-
 func (a *ApplyMVC) PostScoreBy(id int) BaseControllerFmtData {
-	var reqData UpdateApplyScoreInfo
+	var reqData mvc_struct.ApplyScoreInfo
 	GetRequestParams(a.Ctx, &reqData)
 	user := GetUserData(a.Session)
-	if user.Identity == "manager" || user.Identity == "student,manager" {
+	if user.Identity == "student" {
 		return BaseControllerFmtData{
 			Message: "没有权限参与当前评定",
 			Code:    global.ErrorCode,
 			Data:    nil,
 		}
 	}
-	res := applyModel.UpdateApplyScore(id, user.UserId, reqData.ScoreInfo, reqData.Comment)
+	comment, _ := json.Marshal(reqData)
+	res := applyModel.UpdateApplyScore(id, user.UserId, user.Identity, reqData, string(comment))
 	return HandleControllerRes(res, "评定申请流程")
 }
 
