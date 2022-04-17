@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/kataras/iris/v12/mvc"
 	"xupt-scholarship/global"
 	"xupt-scholarship/model"
@@ -90,6 +91,7 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 			Data:    applyInfo.Data,
 		}
 	}
+	fmt.Println(reqData)
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
 		Form: mvc_struct.ApplicationValue{
 			Moral:    reqData.Moral,
@@ -120,14 +122,19 @@ func (a *ApplyMVC) PostScoreBy(id int) BaseControllerFmtData {
 }
 
 func (a *ApplyMVC) PutBy(applyId int, applyType string) BaseControllerFmtData {
-	var reqData mvc_struct.ApplicationValue
+	var reqData mvc_struct.ApplicationRequest
 	GetRequestParams(a.Ctx, &reqData)
 	user := GetUserData(a.Session)
 	formModel := applyModel.UpdateApplyForm(user.UserId, mvc_struct.UpdateApplyBaseInfo{
-		Form:      reqData,
+		Form: mvc_struct.ApplicationValue{
+			Moral:    reqData.Moral,
+			Practice: reqData.Practice,
+			Academic: reqData.Academic,
+		},
 		Id:        applyId,
 		StudentId: user.UserId,
 		Type:      applyType,
+		ScoreInfo: reqData.ScoreInfo,
 	})
 	return HandleControllerRes(formModel, "申请信息处理")
 }

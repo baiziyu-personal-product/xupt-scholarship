@@ -43,7 +43,8 @@ type ApplicationWithUser struct {
 
 type ApplyFormData struct {
 	ApplyFormBaseData
-	Form mvc_struct.ApplicationValue `json:"form"`
+	Form      mvc_struct.ApplicationValue `json:"form"`
+	ScoreInfo mvc_struct.ApplyScoreInfo   `json:"score_info"`
 }
 
 // >>>>>>>>>>>>>> interface <<<<<<<<<<<<<<<//
@@ -97,7 +98,9 @@ func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtDat
 	var Application db.Application
 	result := db.Mysql.First(&Application, applyId)
 	var applicationData mvc_struct.ApplicationValue
+	var applyScoreInfo mvc_struct.ApplyScoreInfo
 	json.Unmarshal(Application.Info, &applicationData)
+	json.Unmarshal(Application.ScoreInfo, &applyScoreInfo)
 	return HandleDBData(result, ApplyFormData{
 		ApplyFormBaseData: ApplyFormBaseData{
 			CreateAt: utils.FmtTimeByUnix(Application.CreateAt),
@@ -105,7 +108,8 @@ func (a *ApplyModel) GetApplyData(applyId int, studentId string) BaseModelFmtDat
 			Editable: Application.UserId == studentId,
 			Status:   Application.Status,
 		},
-		Form: applicationData,
+		Form:      applicationData,
+		ScoreInfo: applyScoreInfo,
 	})
 }
 
