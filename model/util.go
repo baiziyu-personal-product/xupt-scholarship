@@ -39,7 +39,7 @@ func GetDateDurationByHour(startDate string) float64 {
 
 // DispatchProcessNoticeEvent 创建流程通知事件
 func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData, processId int) {
-	var processTasks []mvc_struct.ProcessTask
+	var processTasks []mvc_struct.ProcessStepSchedule
 	processTypes := reflect.TypeOf(processInfo.Form)
 	processValues := reflect.ValueOf(processInfo.Form)
 	stepMap := reflect.ValueOf(global.ProcessStepMap)
@@ -50,21 +50,21 @@ func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData, processI
 		mentions = append(mentions, stepValue.Mentions...)
 		processTasks = append(
 			processTasks,
-			mvc_struct.ProcessTask{
+			mvc_struct.ProcessStepSchedule{
 				Name:       stepMap.Field(i).String(),
 				Step:       stepKey.Field(i).Tag.Get("json"),
 				Duration:   GetDateDurationByHour(stepValue.Date[0]),
 				NotifyList: stepValue.Mentions,
 				Date:       stepValue.Date,
-				Type:       "start",
+				Status:     "start",
 			},
-			mvc_struct.ProcessTask{
+			mvc_struct.ProcessStepSchedule{
 				Name:       stepMap.Field(i).String(),
 				Step:       stepKey.Field(i).Name,
 				Duration:   GetDateDurationByHour(stepValue.Date[1]),
 				NotifyList: stepValue.Mentions,
 				Date:       stepValue.Date,
-				Type:       "end",
+				Status:     "end",
 			})
 	}
 	mentions = removeDuplicationMap(mentions)

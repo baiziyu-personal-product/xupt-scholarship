@@ -35,11 +35,11 @@ type ProcessHistoryItem struct {
 	Step    string `json:"step"`
 }
 
-type ProcessTask struct {
+type ProcessStepSchedule struct {
 	Name       string   `json:"name"`
 	Step       string   `json:"step"`
 	Duration   float64  `json:"duration"`
 	NotifyList []string `json:"notify_list"`
 	Date       []string `json:"date"`
-	Type       string   `json:"type" default:"start"`
+	Status     string   `json:"status" default:"start"`
 }

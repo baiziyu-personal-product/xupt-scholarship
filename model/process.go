@@ -49,8 +49,6 @@ type stepData struct {
 
 // >>>>>>>>>>>>>> interface <<<<<<<<<<<<<<<//
 
-// TODO: 创建定时任务以及对应的数据处理
-
 // CreateProcess 获取评定流程
 func (p *ProcessModel) CreateProcess(data mvc_struct.ProcessFormData, userId string) BaseModelFmtData {
 	info, _ := json.Marshal(data)
@@ -137,4 +135,31 @@ func (p *ProcessModel) GetProcessStep(id int) BaseModelFmtData {
 		History: stepHistory,
 		Current: currentStep,
 	})
+}
+
+// UpdateProcessStep 更新ProcessStep
+func UpdateProcessStep(task mvc_struct.ProcessStepSchedule) {
+	var stepHistory []mvc_struct.ProcessHistoryItem
+	var currentStep mvc_struct.ProcessHistoryItem
+	var procedure db.Procedure
+	result := db.Mysql.Last(&procedure)
+	if result.Error == nil {
+		json.Unmarshal(procedure.History, &stepHistory)
+		currentStep = mvc_struct.ProcessHistoryItem{
+			StartAt: utils.GetCurrentTime(),
+			Step:    task.Step,
+		}
+		stepHistory = append(stepHistory, currentStep)
+		history, _ := json.Marshal(stepHistory)
+		step, _ := json.Marshal(currentStep)
+
+		data := map[string]interface{}{"history": history, "current_step": step}
+
+		result := db.Mysql.Model(&procedure).Where("id = ?", procedure.ID).Updates(data)
+		if result.Error != nil {
+			panic(result.Error)
+		}
+	} else {
+		panic(result.Error)
+	}
 }
