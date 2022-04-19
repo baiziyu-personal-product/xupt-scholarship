@@ -24,19 +24,19 @@ type Application struct {
 	BaseDataModel
 	UserId      string  `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
 	Status      string  `gorm:"column:status;type:varchar(30);default:save" json:"status"`
-	Info        []byte  `gorm:"column:info;type:json" json:"info"`
-	Step        []byte  `gorm:"column:step;type:json" json:"step"`
-	History     []byte  `gorm:"column:history;type:json" json:"history"`
 	Score       float32 `gorm:"column:score;type:float;default:0" json:"score"`
 	ProcedureId int     `gorm:"primaryKey;column:procedure_id;type:int;" json:"procedure_id"`
 	ScoreInfo   []byte  `gorm:"column:score_info;type:json" json:"score_info"`
+	Info        []byte  `gorm:"column:info;type:json" json:"info"`
+	Step        []byte  `gorm:"column:step;type:json" json:"step"`
+	History     []byte  `gorm:"column:history;type:json" json:"history"`
 }
 
 // Procedure 流程
 type Procedure struct {
 	BaseDataModel
-	CurrentStep []byte `gorm:"column:current_step;type:json" json:"current_step"`
 	UserId      string `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
+	CurrentStep []byte `gorm:"column:current_step;type:json" json:"current_step"`
 	Info        []byte `gorm:"column:info;type:json" json:"info"`
 	History     []byte `gorm:"column:history;type:json" json:"history"`
 }

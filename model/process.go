@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"gorm.io/gorm"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
@@ -98,7 +99,8 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 		creatorId = procedure.UserId
 		json.Unmarshal(procedure.History, &stepHistory)
 		json.Unmarshal(procedure.Info, &processInfo)
-		isLate = GetIsLate(processInfo.Form.IndividualApplicationStage.Date[0])
+		fmt.Println(processInfo)
+		isLate = GetIsLate(processInfo.Form[0].Date[0])
 		if isLate {
 			status = "pre_start"
 		}
@@ -135,31 +137,4 @@ func (p *ProcessModel) GetProcessStep(id int) BaseModelFmtData {
 		History: stepHistory,
 		Current: currentStep,
 	})
-}
-
-// UpdateProcessStep 更新ProcessStep
-func UpdateProcessStep(task mvc_struct.ProcessStepSchedule) {
-	var stepHistory []mvc_struct.ProcessHistoryItem
-	var currentStep mvc_struct.ProcessHistoryItem
-	var procedure db.Procedure
-	result := db.Mysql.Last(&procedure)
-	if result.Error == nil {
-		json.Unmarshal(procedure.History, &stepHistory)
-		currentStep = mvc_struct.ProcessHistoryItem{
-			StartAt: utils.GetCurrentTime(),
-			Step:    task.Step,
-		}
-		stepHistory = append(stepHistory, currentStep)
-		history, _ := json.Marshal(stepHistory)
-		step, _ := json.Marshal(currentStep)
-
-		data := map[string]interface{}{"history": history, "current_step": step}
-
-		result := db.Mysql.Model(&procedure).Where("id = ?", procedure.ID).Updates(data)
-		if result.Error != nil {
-			panic(result.Error)
-		}
-	} else {
-		panic(result.Error)
-	}
 }

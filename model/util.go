@@ -1,7 +1,6 @@
 package model
 
 import (
-	"reflect"
 	"time"
 	"xupt-scholarship/global"
 	"xupt-scholarship/mvc_struct"
@@ -40,31 +39,27 @@ func GetDateDurationByHour(startDate string) float64 {
 // DispatchProcessNoticeEvent 创建流程通知事件
 func DispatchProcessNoticeEvent(processInfo mvc_struct.ProcessFormData, processId int) {
 	var processTasks []mvc_struct.ProcessStepSchedule
-	processTypes := reflect.TypeOf(processInfo.Form)
-	processValues := reflect.ValueOf(processInfo.Form)
-	stepMap := reflect.ValueOf(global.ProcessStepMap)
-	stepKey := reflect.TypeOf(global.ProcessStepMap)
 	var mentions []string
-	for i := 0; i < processTypes.NumField(); i++ {
-		stepValue := processValues.Field(i).Interface().(mvc_struct.ProcessStepValue)
-		mentions = append(mentions, stepValue.Mentions...)
+	var processList = global.ProcessStepList
+	for i, v := range processInfo.Form {
+		mentions = append(mentions, v.Mentions...)
 		processTasks = append(
 			processTasks,
 			mvc_struct.ProcessStepSchedule{
-				Name:       stepMap.Field(i).String(),
-				Step:       stepKey.Field(i).Tag.Get("json"),
-				Duration:   GetDateDurationByHour(stepValue.Date[0]),
-				NotifyList: stepValue.Mentions,
-				Date:       stepValue.Date,
-				Status:     "start",
+				Name:       processList[i],
+				Step:       v.Step,
+				Duration:   GetDateDurationByHour(v.Date[0]),
+				NotifyList: v.Mentions,
+				Date:       v.Date,
+				Status:     global.ProcessStart,
 			},
 			mvc_struct.ProcessStepSchedule{
-				Name:       stepMap.Field(i).String(),
-				Step:       stepKey.Field(i).Name,
-				Duration:   GetDateDurationByHour(stepValue.Date[1]),
-				NotifyList: stepValue.Mentions,
-				Date:       stepValue.Date,
-				Status:     "end",
+				Name:       processList[i],
+				Step:       v.Step,
+				Duration:   GetDateDurationByHour(v.Date[1]),
+				NotifyList: v.Mentions,
+				Date:       v.Date,
+				Status:     global.ProcessEnd,
 			})
 	}
 	mentions = removeDuplicationMap(mentions)

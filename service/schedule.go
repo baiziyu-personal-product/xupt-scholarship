@@ -13,8 +13,8 @@ func handleProcessServiceDurationByStatus(status string, duration float64) *time
 	return time.NewTimer(time.Duration(duration-global.ProcessStartDurationHours) * time.Hour)
 }
 
-// newTimerSchedule 奖学金评定流程发起
-func newTimerSchedule(
+// NewTimerSchedule 奖学金评定流程发起
+func NewTimerSchedule(
 	task mvc_struct.ProcessStepSchedule,
 	updateProcessStep func(mvc_struct.ProcessStepSchedule),
 ) {
