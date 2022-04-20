@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 	"gorm.io/gorm"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
@@ -41,6 +40,7 @@ type ProcessStatusRes struct {
 	ProcessId  int    `json:"process_id"`
 	Editable   bool   `json:"editable"`
 	Createable bool   `json:"createable"`
+	Step       string `json:"step"`
 }
 
 type stepData struct {
@@ -87,6 +87,7 @@ func (p *ProcessModel) GetProcessFormData(id int) BaseModelFmtData {
 func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) BaseModelFmtData {
 	var procedure db.Procedure
 	var stepHistory []mvc_struct.ProcessHistoryItem
+	var currentStep mvc_struct.ProcessHistoryItem
 	var processInfo mvc_struct.ProcessFormData
 	yearTime := GetCurrentYear("")
 	result := db.Mysql.Where("create_at > ?", yearTime).First(&procedure)
@@ -97,9 +98,9 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 	if result.Error == nil {
 		procedureId = procedure.ID
 		creatorId = procedure.UserId
+		json.Unmarshal(procedure.CurrentStep, &currentStep)
 		json.Unmarshal(procedure.History, &stepHistory)
 		json.Unmarshal(procedure.Info, &processInfo)
-		fmt.Println(processInfo)
 		isLate = GetIsLate(processInfo.Form[0].Date[0])
 		if isLate {
 			status = "pre_start"
@@ -111,6 +112,7 @@ func (p *ProcessModel) GetCurrentYearProcess(userId string, identity string) Bas
 	res := ProcessStatusRes{
 		Status:     status,
 		ProcessId:  procedureId,
+		Step:       currentStep.Step,
 		Editable:   userId == creatorId && (!isLate),
 		Createable: identity == "manager" && creatorId == userId && procedureId == -1,
 	}
