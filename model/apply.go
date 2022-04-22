@@ -53,7 +53,7 @@ type ApplyFormData struct {
 func (a *ApplyModel) CheckIsExistThisYear(userId string) BaseModelFmtData {
 	var application db.Application
 	procedureId := processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
-	result := db.Mysql.Where("procedure_id = ? AND user_id = ?", procedureId, userId).Find(&application)
+	result := db.Mysql.Where("procedure_id = ? AND user_id = ?", procedureId, userId).First(&application)
 	return HandleDBData(result, application.ID)
 }
 
@@ -69,6 +69,7 @@ func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) Base
 		ProcedureId: procedureId,
 		Score:       getScore(data.ScoreInfo),
 		ScoreInfo:   scoreForm,
+		History:     []byte("[]"),
 	}
 	result := db.Mysql.Create(&newApplication)
 	return HandleDBData(result, newApplication.ID)

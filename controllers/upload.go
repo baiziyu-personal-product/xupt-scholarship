@@ -91,11 +91,9 @@ func (u *UploadMVC) Post() BaseControllerFmtData {
 }
 
 func (u *UploadMVC) PostStudentList() BaseControllerFmtData {
-	var reqData []mvc_struct.StudentItem
-	GetRequestParams(u.Ctx, &reqData)
-	return BaseControllerFmtData{
-		Message: "Success",
-		Code:    global.SuccessCode,
-		Data:    reqData,
-	}
+	var userList []mvc_struct.StudentItem
+	GetRequestParams(u.Ctx, &userList)
+
+	m := UserModel.CreateStudentByList(userList)
+	return HandleControllerRes(m, "上传学生名单")
 }

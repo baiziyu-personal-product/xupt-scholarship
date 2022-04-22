@@ -12,7 +12,8 @@ type UserModel struct {
 type UserModelInterface interface {
 	GetUserList() BaseModelFmtData
 	GetUser(email string) BaseModelFmtData
-	UpdateUser(email string, info mvc_struct.UpdateUserInfo) BaseModelFmtData
+	UpdateUser(email string, userIdentity string, info mvc_struct.UpdateUserInfo) BaseModelFmtData
+	CreateStudentByList(list []mvc_struct.UploadStudentInfo) BaseModelFmtData
 }
 
 // >>>>>>>>>>>>>>> struct <<<<<<<<<<<<<<<<//
@@ -95,4 +96,34 @@ func (u *UserModel) UpdateUser(email string, userIdentity string, info mvc_struc
 	}
 	result := db.Mysql.Model(&user).Where("email = ?", email).Updates(infoMap)
 	return HandleDBData(result, user.ID)
+}
+
+func (u *UserModel) CreateStudentByList(list []mvc_struct.StudentItem) BaseModelFmtData {
+	var users []db.User
+	for _, temp := range list {
+		info := mvc_struct.StudentInfo{
+			Professional: temp.Professional,
+			Grade:        temp.Grade,
+			Class:        temp.Class,
+			Type:         temp.Type,
+		}
+		jsonInfo, _ := json.Marshal(info)
+		student := db.User{
+			Name:     temp.Name,
+			Email:    temp.Email,
+			Phone:    temp.Phone,
+			Password: temp.Password,
+			Identity: "student",
+			UserId:   temp.StudentId,
+			Info:     jsonInfo,
+		}
+		users = append(users, student)
+	}
+
+	result := db.Mysql.Create(&users)
+	var res []string
+	for _, user := range users {
+		res = append(res, user.UserId)
+	}
+	return HandleDBData(result, res)
 }

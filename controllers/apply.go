@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/kataras/iris/v12/mvc"
 	"xupt-scholarship/global"
 	"xupt-scholarship/model"
@@ -91,7 +90,6 @@ func (a *ApplyMVC) PostHandleFormBy(handleType string) BaseControllerFmtData {
 			Data:    applyInfo.Data,
 		}
 	}
-	fmt.Println(reqData)
 	formModel := applyModel.CreateApplyForm(mvc_struct.CreateApplyByBaseInfo{
 		Form: mvc_struct.ApplicationValue{
 			Moral:    reqData.Moral,

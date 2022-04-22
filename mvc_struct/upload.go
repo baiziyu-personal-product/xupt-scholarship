@@ -10,6 +10,10 @@ type StudentItem struct {
 	CourseCredit float32 `json:"course_credit"`
 	Phone        string  `json:"phone"`
 	Email        string  `json:"email"`
+	Password     string  `json:"password"`
+	Grade        string  `json:"grade"`
+	Class        int     `json:"class"`
+	Type         string  `json:"type"`
 }
 
 type originFileObj struct {
@@ -27,4 +31,9 @@ type UploadFileItem struct {
 	Uid              string        `json:"uid"`
 	Url              string        `json:"url"`
 	ThumbUrl         string        `json:"thumbUrl"`
+}
+
+type UploadStudentInfo struct {
+	UpdateUserInfo
+	SignOfRegister
 }
