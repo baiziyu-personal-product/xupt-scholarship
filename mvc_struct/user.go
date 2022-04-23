@@ -22,3 +22,12 @@ type UpdateUserInfo struct {
 	Student StudentInfo `json:"student"`
 	Manager ManagerInfo `json:"manager"`
 }
+
+type Student struct {
+	Info   StudentInfo
+	Course float32 `json:"course"`
+	Name   string  `json:"name"`
+	Phone  string  `json:"phone"`
+	Avatar string  `json:"avatar"`
+	UserId string  `json:"user_id"`
+}

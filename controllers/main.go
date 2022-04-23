@@ -54,6 +54,10 @@ func Router() {
 	mvc.Configure(app.Party("/process", middleware.JwtVerify()), UseProcessMVC)
 	// 配置 申请 相关路由
 	mvc.Configure(app.Party("/apply", middleware.JwtVerify()), UseApplyMVC)
+	// 配置 结果公示相关路由
+	mvc.Configure(app.Party("/announcement", middleware.JwtVerify()), UseAnnouncementMVC)
+	// 配置 评论相关路由
+	mvc.Configure(app.Party("/comment", middleware.JwtVerify()), UseCommentMVC)
 
 	server := &http.Server{Addr: ":" + strconv.Itoa(global.Settings.Port)}
 	handleSignal(server)
