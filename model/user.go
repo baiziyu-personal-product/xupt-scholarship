@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"gorm.io/gorm"
 	"xupt-scholarship/db"
 	"xupt-scholarship/mvc_struct"
 )
@@ -22,6 +23,7 @@ type UserModelInterface interface {
 
 type LoginUserInfo struct {
 	UserBaseInfo
+	Course   float32                `json:"course"`
 	Phone    string                 `json:"phone"`
 	Identity string                 `json:"identity"`
 	UserId   string                 `json:"user_id"`
@@ -90,6 +92,7 @@ func (u *UserModel) GetUser(email string) BaseModelFmtData {
 			Email:  user.Email,
 			Avatar: user.Avatar,
 		},
+		Course:   user.Course,
 		Phone:    user.Phone,
 		Identity: user.Identity,
 		UserId:   user.UserId,
@@ -127,8 +130,10 @@ func (u *UserModel) UpdateUser(email string, userIdentity string, info mvc_struc
 }
 
 func (u *UserModel) CreateStudentByList(list []mvc_struct.StudentItem) BaseModelFmtData {
-	var users []db.User
+
+	var res []string
 	for _, temp := range list {
+		var userDB db.User
 		info := mvc_struct.StudentInfo{
 			Professional: temp.Professional,
 			Grade:        temp.Grade,
@@ -146,13 +151,26 @@ func (u *UserModel) CreateStudentByList(list []mvc_struct.StudentItem) BaseModel
 			Info:     jsonInfo,
 			Course:   temp.CourseCredit,
 		}
-		users = append(users, student)
+		exist := db.Mysql.Where("user_id = ?", student.UserId).First(&userDB)
+		if exist.Error == nil {
+			var userDB db.User
+			updateRes := db.Mysql.Model(&userDB).Where("user_id = ?", student.UserId).Updates(map[string]interface{}{
+				"course": student.Course,
+			})
+			if updateRes.Error == nil {
+				res = append(res, student.UserId)
+			}
+		} else {
+			createRes := db.Mysql.Create(&student)
+			if createRes.Error == nil {
+				res = append(res, student.UserId)
+			}
+		}
 	}
-
-	result := db.Mysql.Create(&users)
-	var res []string
-	for _, user := range users {
-		res = append(res, user.UserId)
-	}
-	return HandleDBData(result, res)
+	return HandleDBData(&gorm.DB{
+		Config:       nil,
+		Error:        nil,
+		RowsAffected: 0,
+		Statement:    nil,
+	}, res)
 }
