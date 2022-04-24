@@ -31,6 +31,7 @@ type Application struct {
 	Info        []byte  `gorm:"column:info;type:json" json:"info"`
 	Step        []byte  `gorm:"column:step;type:json" json:"step"`
 	History     []byte  `gorm:"column:history;type:json" json:"history"`
+	ShipType    string  `gorm:"column:ship_type;type:varchar(45)" json:"ship_type"`
 }
 
 // Procedure 流程

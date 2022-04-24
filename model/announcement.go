@@ -32,6 +32,7 @@ func (a *AnnouncementModel) GetAnnouncementDataByProcedureId(procedureId int) Ba
 				Grade:        stu.Info.Grade,
 				Class:        stu.Info.Class,
 				CourseCredit: stu.Course,
+				ShipType:     v.ShipType,
 			})
 		}
 	}

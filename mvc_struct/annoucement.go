@@ -13,4 +13,5 @@ type AnnouncementData struct {
 	Grade        string  `json:"grade"`
 	Class        int     `json:"class"`
 	CourseCredit float32 `json:"course_credit"`
+	ShipType     string  `json:"ship_type"`
 }
