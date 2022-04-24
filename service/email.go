@@ -11,12 +11,13 @@ import (
 	"xupt-scholarship/global"
 )
 
-func generateContent() {
-
+type EmailService struct {
+	Email *email.Email
 }
 
-// setProcessStepEndTemplate
-func setProcessStepEndTemplate(e *email.Email, processType string, endDate string) {
+// ProcessStepEnd 流程终止提醒
+func (es *EmailService) ProcessStepEnd(processStep string, endDate string) {
+	e := es.Email
 	e.Subject = time.Now().Format("2006") + "年研究生奖学金评定流程结束的通知"
 	e.HTML = []byte(`
 		<div style="background-color: #014a95;">
@@ -38,7 +39,7 @@ func setProcessStepEndTemplate(e *email.Email, processType string, endDate strin
           "
         >
           <p style="text-indent: 2em;">
-            本次研究生奖学金：◣` + processType + `◥流程将于` + endDate + `结束，请尚未完成当前流程的同学以及管理员抓紧完善当前流程工作内容。
+            本次研究生奖学金：◣` + processStep + `◥流程将于` + endDate + `结束，请尚未完成当前流程的同学以及管理员抓紧完善当前流程工作内容。
           </p>
           <p style="text-indent: 2em;">
             本通知仅用于通知流程变更以及提醒用户注意当前流程轮转。
@@ -59,8 +60,9 @@ func setProcessStepEndTemplate(e *email.Email, processType string, endDate strin
 	`)
 }
 
-// setProcessStepStartTemplate
-func setProcessStepStartTemplate(e *email.Email, processType string, startDate, endDate string) {
+// ProcessStepStart 流程开启通知
+func (es *EmailService) ProcessStepStart(processStep string, startDate, endDate string) {
+	e := es.Email
 	e.Subject = time.Now().Format("2006") + "年研究生奖学金评定流程轮转的通知"
 	e.HTML = []byte(`
 		<div style="background-color: #014a95;">
@@ -83,7 +85,7 @@ func setProcessStepStartTemplate(e *email.Email, processType string, startDate, 
         >
 
           <p style="text-indent: 2em;">
-            研究生奖学金：◣` + processType + `◥流程，将于` + startDate + `开始，` + endDate + `结束` +
+            研究生奖学金：◣` + processStep + `◥流程，将于` + startDate + `开始，` + endDate + `结束` +
 		` 
           </p>
           <p style="text-indent: 2em;">
@@ -105,8 +107,9 @@ func setProcessStepStartTemplate(e *email.Email, processType string, startDate, 
 	`)
 }
 
-// setProcessOpenTemplate 设置发起奖学金评定流程的邮件模板
-func setProcessOpenTemplate(e *email.Email, startDate string) {
+// ProcessInit  设置发起奖学金评定流程的邮件模板
+func (es *EmailService) ProcessInit(startDate string) {
+	e := es.Email
 	e.Subject = "开启" + time.Now().Format("2006") + "年研究生奖学金评定流程的通知"
 	e.HTML = []byte(`
 		<div style="background-color: #014a95;">
@@ -131,7 +134,38 @@ func setProcessOpenTemplate(e *email.Email, startDate string) {
 	`)
 }
 
-func SendEmail(taskType string, processType string, receiveEmailList []string, taskDates ...string) {
+type ProcessBaseEmailOptions struct {
+	Step      string   `json:"step"`
+	EndDate   string   `json:"end_date"`
+	StartDate string   `json:"start_date"`
+	Status    string   `json:"status"`
+	Receiver  []string `json:"receiver"`
+}
+
+// handleProcessEmailByStatus 通过状态处理发送的Process邮件
+func handleProcessEmailByStatus(e EmailService, options ProcessBaseEmailOptions) {
+	status, step := options.Status, options.Step
+	if status == global.ProcessInit {
+		e.ProcessInit(options.StartDate)
+	} else if status == global.ProcessStart {
+		e.ProcessStepStart(step, options.StartDate, options.EndDate)
+	} else {
+		e.ProcessStepEnd(step, options.StartDate)
+	}
+}
+
+// sendProcessStatusToReceivers 发送Process 信息邮件
+func sendProcessStatusToReceivers(ch chan *email.Email, options ProcessBaseEmailOptions) {
+	for _, receiver := range options.Receiver {
+		e := EmailService{Email: email.NewEmail()}
+		e.Email.From = "西安邮电大学研究生院<" + global.EmailAddress + ">"
+		e.Email.To = []string{receiver}
+		handleProcessEmailByStatus(e, options)
+		ch <- e.Email
+	}
+}
+
+func SendEmail(options ProcessBaseEmailOptions) {
 	ch := make(chan *email.Email, 10)
 	p, err := email.NewPool(
 		global.EmailHost+":"+global.EmailPort,
@@ -155,20 +189,7 @@ func SendEmail(taskType string, processType string, receiveEmailList []string, t
 			}
 		}()
 	}
-	for _, receiver := range receiveEmailList {
-		e := email.NewEmail()
-		e.From = "西安邮电大学研究生院<" + global.EmailAddress + ">"
-		e.To = []string{receiver}
-		if taskType == "init" {
-			setProcessOpenTemplate(e, taskDates[0])
-		} else if taskType == "start" {
-			setProcessStepStartTemplate(e, processType, taskDates[0], taskDates[1])
-		} else {
-			setProcessStepEndTemplate(e, processType, taskDates[0])
-		}
-		ch <- e
-	}
-
+	sendProcessStatusToReceivers(ch, options)
 	close(ch)
 	wg.Wait()
 }

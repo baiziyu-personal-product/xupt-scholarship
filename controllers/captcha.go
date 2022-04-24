@@ -56,7 +56,7 @@ func (C *CaptchaMVC) GetBy(imgPath string) {
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "0")
-	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Content-Status", "image/png")
 	code := imgPath[:strings.Index(imgPath, "-")]
 	captcha.WriteImage(&content, code, 180, 60)
 	http.ServeContent(w, r, imgPath, time.Time{}, bytes.NewReader(content.Bytes()))

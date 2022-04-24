@@ -53,7 +53,7 @@ type ApplyFormData struct {
 func (a *ApplyModel) CheckIsExistThisYear(userId string) BaseModelFmtData {
 	var application db.Application
 	procedureId := processModel.GetProcessFormData(-1).Data.(ProcedureModelFormData).Id
-	result := db.Mysql.Where("procedure_id = ? AND user_id = ?", procedureId, userId).Find(&application)
+	result := db.Mysql.Where("procedure_id = ? AND user_id = ?", procedureId, userId).First(&application)
 	return HandleDBData(result, application.ID)
 }
 
@@ -67,8 +67,9 @@ func (a *ApplyModel) CreateApplyForm(data mvc_struct.CreateApplyByBaseInfo) Base
 		UserId:      data.StudentId,
 		Status:      data.Type,
 		ProcedureId: procedureId,
-		Score:       getScore(data.ScoreInfo),
+		Score:       data.ScoreInfo.Sum,
 		ScoreInfo:   scoreForm,
+		History:     []byte("[]"),
 	}
 	result := db.Mysql.Create(&newApplication)
 	return HandleDBData(result, newApplication.ID)
@@ -82,15 +83,11 @@ func (a *ApplyModel) UpdateApplyForm(userId string, data mvc_struct.UpdateApplyB
 	var updateMap = map[string]interface{}{
 		"status":     data.Type,
 		"info":       string(jsonForm),
-		"score":      getScore(data.ScoreInfo),
+		"score":      data.ScoreInfo.Sum,
 		"score_info": scoreForm,
 	}
 	result := db.Mysql.Model(&apply).Where("id = ? AND user_id = ?", data.Id, userId).Updates(updateMap)
 	return HandleDBData(result, apply.ID)
-}
-
-func getScore(scoreInfo mvc_struct.ApplyScoreInfo) float32 {
-	return scoreInfo.Moral + scoreInfo.Practice + scoreInfo.Academic
 }
 
 // GetApplyData 获取申请信息
@@ -183,7 +180,7 @@ func (a *ApplyModel) UpdateApplyScore(id int, userId string, identity string, da
 	historyForm, _ := json.Marshal(history)
 	var updateMap = map[string]interface{}{
 		"score_info": jsonForm,
-		"score":      getScore(data),
+		"score":      data.Sum,
 		"step":       stepForm,
 		"history":    historyForm,
 	}

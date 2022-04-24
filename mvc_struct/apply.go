@@ -157,10 +157,11 @@ type ApplyListFilterParams struct {
 }
 
 type ApplyScoreInfo struct {
-	Moral    float32 `json:"moral"`
-	Practice float32 `json:"practice"`
-	Academic float32 `json:"academic"`
-	Sum      float32 `json:"sum"`
+	Base     float32 `json:"base" default:"0"`
+	Moral    float32 `json:"moral" default:"0"`
+	Practice float32 `json:"practice" default:"0"`
+	Academic float32 `json:"academic" default:"0"`
+	Sum      float32 `json:"sum" default:"0"`
 }
 
 type ApplyHistoryStep struct {

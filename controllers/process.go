@@ -14,6 +14,7 @@ type ProcessMVC struct {
 type ProcessController interface {
 	Get() BaseControllerFmtData
 	GetBy(processId int) BaseControllerFmtData
+	GetStepBy(processId int) BaseControllerFmtData
 	Post() BaseControllerFmtData
 	PutBy(processId int) BaseControllerFmtData
 }
@@ -33,6 +34,11 @@ func (p *ProcessMVC) Get() BaseControllerFmtData {
 func (p *ProcessMVC) GetBy(processId int) BaseControllerFmtData {
 	m := ProcessModel.GetProcessFormData(processId)
 	return HandleControllerRes(m, "获取评定流程")
+}
+
+func (p *ProcessMVC) GetStepBy(processId int) BaseControllerFmtData {
+	m := ProcessModel.GetProcessStep(processId)
+	return HandleControllerRes(m, "评定流程状态")
 }
 
 func (p *ProcessMVC) Post() BaseControllerFmtData {

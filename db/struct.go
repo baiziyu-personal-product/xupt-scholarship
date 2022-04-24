@@ -9,14 +9,15 @@ type BaseDataModel struct {
 // User 用户表
 type User struct {
 	BaseDataModel
-	Name     string `gorm:"column:name;type:varchar(45)" json:"name"`
-	Avatar   string `gorm:"column:avatar;type:longtext" json:"avatar"`
-	Email    string `gorm:"primaryKey;column:email;type:varchar(320);unique" json:"email"`
-	Phone    string `gorm:"primaryKey;column:phone;type:varchar(45);unique" json:"phone"`
-	Password string `gorm:"column:password;type:varchar(45)" json:"password"`
-	Identity string `gorm:"column:identity;type:set('student', 'manager');default:student;" json:"identity"`
-	UserId   string `gorm:"primaryKey;column:user_id;type:varchar(20);unique" json:"user_id"`
-	Info     []byte `gorm:"column:info;type:json" json:"info"`
+	Name     string  `gorm:"column:name;type:varchar(45)" json:"name"`
+	Avatar   string  `gorm:"column:avatar;type:longtext" json:"avatar"`
+	Email    string  `gorm:"primaryKey;column:email;type:varchar(320);unique" json:"email"`
+	Phone    string  `gorm:"primaryKey;column:phone;type:varchar(45);unique" json:"phone"`
+	Password string  `gorm:"column:password;type:varchar(45)" json:"password"`
+	Identity string  `gorm:"column:identity;type:set('student', 'manager');default:student;" json:"identity"`
+	UserId   string  `gorm:"primaryKey;column:user_id;type:varchar(20);unique" json:"user_id"`
+	Info     []byte  `gorm:"column:info;type:json" json:"info"`
+	Course   float32 `gorm:"column:course;type:float;default:0.0" json:"course"`
 }
 
 // Application 申请表单
@@ -24,19 +25,20 @@ type Application struct {
 	BaseDataModel
 	UserId      string  `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
 	Status      string  `gorm:"column:status;type:varchar(30);default:save" json:"status"`
-	Info        []byte  `gorm:"column:info;type:json" json:"info"`
-	Step        []byte  `gorm:"column:step;type:json" json:"step"`
-	History     []byte  `gorm:"column:history;type:json" json:"history"`
 	Score       float32 `gorm:"column:score;type:float;default:0" json:"score"`
 	ProcedureId int     `gorm:"primaryKey;column:procedure_id;type:int;" json:"procedure_id"`
 	ScoreInfo   []byte  `gorm:"column:score_info;type:json" json:"score_info"`
+	Info        []byte  `gorm:"column:info;type:json" json:"info"`
+	Step        []byte  `gorm:"column:step;type:json" json:"step"`
+	History     []byte  `gorm:"column:history;type:json" json:"history"`
+	ShipType    string  `gorm:"column:ship_type;type:varchar(45)" json:"ship_type"`
 }
 
 // Procedure 流程
 type Procedure struct {
 	BaseDataModel
-	CurrentStep []byte `gorm:"column:current_step;type:json" json:"current_step"`
 	UserId      string `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
+	CurrentStep []byte `gorm:"column:current_step;type:json" json:"current_step"`
 	Info        []byte `gorm:"column:info;type:json" json:"info"`
 	History     []byte `gorm:"column:history;type:json" json:"history"`
 }
@@ -47,6 +49,15 @@ type Action struct {
 	UserId  string `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
 	ApplyId int    `gorm:"primaryKey;column:apply_id;type:int;" json:"apply_id"`
 	Info    []byte `gorm:"column:info;type:json" json:"info"`
+}
+
+// Comment 评论列表
+type Comment struct {
+	BaseDataModel
+	Content     string `gorm:"column:content;type:longtext;" json:"content"`
+	ReplyId     int    `gorm:"column:reply_id;type:int" json:"reply_id"`
+	ProcedureId int    `gorm:"primaryKey;column:procedure_id;type:int;" json:"procedure_id"`
+	UserId      string `gorm:"primaryKey;column:user_id;type:varchar(20)" json:"user_id"`
 }
 
 // Log 日志表
